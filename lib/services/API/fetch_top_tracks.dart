@@ -13,22 +13,24 @@ findTopTracks({
   required String accessToken,
   required String refreshToken,
 }) async {
+  print("Finding user's top tracks");
   final Uri uri = Uri.parse(
-      'https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=30');
+      'https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=50');
   final response = await http.get(
     uri,
     headers: {
       'Authorization': 'Bearer $accessToken',
     },
   );
-  print(response.statusCode);
   print(response.body);
   if (response.statusCode == 200) {
     final map = jsonDecode(response.body);
 
+    int total = map['items'].length;
+
     // Stores info for all top tracks
     List<Map<String, String>> topTracks = [];
-    for (int i = 0; i < 30; i++) {
+    for (int i = 0; i < total; i++) {
       // Stores track name, album art, share link and preview link.
       Map<String, String> trackInfo = {};
       // Add track name ✔
@@ -53,7 +55,9 @@ findTopTracks({
       }
       topTracks.add(trackInfo);
     }
+    print(topTracks);
   } else if (response.statusCode == 401) {
+    print('Access token expired');
     requestRefreshedAccessToken(refreshToken: refreshToken);
 
     // Obtain the new access token from flutter_secure_storage

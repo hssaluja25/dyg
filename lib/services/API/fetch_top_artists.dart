@@ -10,22 +10,24 @@ findTopArtists(
     {required String accessToken,
     required String refreshToken,
     required bool spotifyInstalled}) async {
+  print("Fetching user's top artists");
   final Uri uri = Uri.parse(
-      'https://api.spotify.com/v1/me/top/artists?time_range=short_term&limit=20');
+      'https://api.spotify.com/v1/me/top/artists?time_range=short_term&limit=50');
   final response = await http.get(
     uri,
     headers: {
       "Authorization": "Bearer $accessToken",
     },
   );
-  print(response.statusCode);
   print(response.body);
   if (response.statusCode == 200) {
     final map = jsonDecode(response.body);
 
+    int total = map['items'].length;
+
     // Stores info for all top artists
     List<Map<String, String>> topArtists = [];
-    for (int i = 0; i < 20; i++) {
+    for (int i = 0; i < total; i++) {
       // Stores artist name, image links and their page.
       Map<String, String> artistInfo = {};
       // Add artist name
@@ -40,6 +42,7 @@ findTopArtists(
       topArtists.add(artistInfo);
     }
   } else if (response.statusCode == 401) {
+    print('Access token expired');
     requestRefreshedAccessToken(refreshToken: refreshToken);
 
     // Obtain the new access token from flutter_secure_storage

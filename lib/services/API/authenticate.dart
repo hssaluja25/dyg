@@ -78,15 +78,11 @@ void authenticate({required BuildContext context}) async {
       final map = jsonDecode(response.body);
       final String accessToken = map["access_token"];
       final String refreshToken = map["refresh_token"];
-      debugPrint('Access token: $accessToken');
-      debugPrint('Refresh token: $refreshToken');
-      debugPrint('Encrypted Access Token is:');
       encryptAndStore(
         encryptionKey: config.encryptionKeyForAccessToken,
         storageKey: 'accessToken',
         input: accessToken,
       );
-      debugPrint('Encrypted Refresh Token is:');
       encryptAndStore(
         encryptionKey: config.encryptionKeyForRefreshToken,
         storageKey: 'refreshToken',

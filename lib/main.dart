@@ -30,60 +30,73 @@ class _DygState extends State<Dyg> {
   bool loginIsDoneOnce = true;
   String? accessToken;
   String? refreshToken;
+  bool obtainTokensFinished = false;
 
   @override
   void initState() {
-    () async {
-      if (await storage.containsKey(key: 'accessToken')) {
-        final String encryptedRefreshToken =
-            await storage.read(key: 'refreshToken') ?? '';
-        final String encryptedAccessToken =
-            await storage.read(key: 'accessToken') ?? '';
-
-        setState(
-          () {
-            refreshToken = decrypt(
-              decryptionKey: config.encryptionKeyForRefreshToken,
-              input: encryptedRefreshToken,
-            );
-          },
-        );
-        setState(
-          () {
-            accessToken = decrypt(
-              decryptionKey: config.encryptionKeyForAccessToken,
-              input: encryptedAccessToken,
-            );
-          },
-        );
-      } else {
-        setState(() => loginIsDoneOnce = false);
-      }
-    }();
     super.initState();
+    obtainTokens();
+  }
+
+  Future<void> obtainTokens() async {
+    print('Obtaining tokens now');
+    if (await storage.containsKey(key: 'accessToken')) {
+      print('Access token exists already');
+      final String encryptedAccessToken =
+          await storage.read(key: 'accessToken') ?? '';
+      final String encryptedRefreshToken =
+          await storage.read(key: 'refreshToken') ?? '';
+
+      setState(
+        () {
+          accessToken = decrypt(
+            decryptionKey: config.encryptionKeyForAccessToken,
+            input: encryptedAccessToken,
+          );
+        },
+      );
+      setState(
+        () {
+          refreshToken = decrypt(
+            decryptionKey: config.encryptionKeyForRefreshToken,
+            input: encryptedRefreshToken,
+          );
+        },
+      );
+    } else {
+      print('Access token does not exist');
+      setState(
+        () => loginIsDoneOnce = false,
+      );
+      print('loginIsDoneOnce = $loginIsDoneOnce');
+    }
+    setState(() => obtainTokensFinished = true);
   }
 
   @override
   Widget build(BuildContext context) {
-    // We have done this because since we are using Futures, even when accessToken is not obtained, still the build method is called.
-    // Hence, by using accessToken!=null, we can ensure that everything in the initState() has been executed.
-    if (accessToken != null) {
-      return MaterialApp(
-        title: 'Dyg',
-        debugShowCheckedModeBanner: false,
-        home: SafeArea(
-          child: loginIsDoneOnce == false
-              ? const OnboardingPage()
-              : HomePage(
-                  accessToken: accessToken ?? '',
-                  refreshToken: refreshToken ?? '',
+    print('Inside build');
+    return MaterialApp(
+      title: 'Dyg',
+      debugShowCheckedModeBanner: false,
+      home: SafeArea(
+        child: obtainTokensFinished == true
+            ? (loginIsDoneOnce == false
+                ? const OnboardingPage()
+                : HomePage(
+                    accessToken: accessToken ?? '',
+                    refreshToken: refreshToken ?? '',
+                  ))
+            : // Waiting for obtain tokens to finish
+            Scaffold(
+                body: Container(
+                  width: double.infinity,
+                  height: double.infinity,
+                  color: Color(0xFFF2C4C2),
+                  child: CircularProgressIndicator(),
                 ),
-        ),
-      );
-    } else {
-      return Container(
-        color: Color(0xFFF2C4C2),
-      );
-    }
+              ),
+      ),
+    );
   }
 }

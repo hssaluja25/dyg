@@ -1,11 +1,96 @@
-I/flutter (20924): Access token: BQAmrm-xT8dvMcwdptmxwMmBIRHPxKKQqbdPtXPIfjCTitCbOmgwG_7awei8NucVtEf0_HdwtHK7PTLPEHnpyK1UgQxozY4DiYDdtD4gMNhmtzfjiU9PqzLaQM3rxZ0iO4kkjljwnvPDlU_YDEg7FGuh-ztDDWCvij_hYAwlS_aSd7WyeynabYq4LH1M6UXMfnSSzd2p-A
-I/flutter (20924): Refresh token: AQBpnMWlXVCLXp9hA4Qu79JaReq7HB8jbHolDGDW_GmNAjiOIKUvfYL4-ShA1GAKybd8SfpWWwUlJP6YhN1ORm2uNi3rK40tulR9TCljCvtOVL6ID2E2D3evmmo5mtU1mGU
-I/flutter (20924): Encrypted Access Token is:
-I/flutter (20924): uz1SF2qk/+wpCWjG2mibVwudQ6o59caPTO6zy02bemGh6WAeFWUypJ9CwzkBtu94VJir8n4UqIMlZum335l4/IC3NQ/ZZ4bmp/Oc0gmtw4ldcI26bTHjXLCUDv646bxzOR0B/JTuZ4y8ewUnUHyRxflDPPxYdz/T5KYnwPeXEvm8pfwm7iSAF1f2yzmtejFtn9vLoUrfhh+NQrAHZbWfbgWDMZFjpe1/O6KDIUeJroAQj3P4gzhzj+ASVVLeo6Tkmi6sMQ95iBj41Yrkn7/lqw==
-I/flutter (20924): Encrypted Refresh Token is:
-I/flutter (20924): t7DJLKMWjW4c+gjtw26Us5YEYtqZTr1TYf5shSyfkZmNXGP2X3vvWUyqLrVJkESEB2ZzlAHKpNA53xsHZUcerPhhbPjk6KtY2DhJe2L76c4YFWlwNDYhWgWeYnxTf+qqXYvUwqET9Fw2zjPTrVc/NzQ0n30YmqcYE/MPoH8IwOuspyt9j+jkVgdzd4SjxWBK
+import 'package:flutter/material.dart';
+// For setting preferred orientation
+import 'package:flutter/services.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:spotify/pages/onboarding/onboarding.dart';
+import 'package:spotify/services/API/config.dart' as config;
+import 'package:spotify/services/API/decrypt.dart';
+import 'pages/home/home.dart';
 
-I/flutter (10183): Encrypted access token: uz1SF2qk/+wpCWjG2mibVwudQ6o59caPTO6zy02bemGh6WAeFWUypJ9CwzkBtu94VJir8n4UqIMlZum335l4/IC3NQ/ZZ4bmp/Oc0gmtw4ldcI26bTHjXLCUDv646bxzOR0B/JTuZ4y8ewUnUHyRxflDPPxYdz/T5KYnwPeXEvm8pfwm7iSAF1f2yzmtejFtn9vLoUrfhh+NQrAHZbWfbgWDMZFjpe1/O6KDIUeJroAQj3P4gzhzj+ASVVLeo6Tkmi6sMQ95iBj41Yrkn7/lqw==
-I/flutter (10183): Encrypted refresh token: t7DJLKMWjW4c+gjtw26Us5YEYtqZTr1TYf5shSyfkZmNXGP2X3vvWUyqLrVJkESEB2ZzlAHKpNA53xsHZUcerPhhbPjk6KtY2DhJe2L76c4YFWlwNDYhWgWeYnxTf+qqXYvUwqET9Fw2zjPTrVc/NzQ0n30YmqcYE/MPoH8IwOuspyt9j+jkVgdzd4SjxWBK
-I/flutter (10183): Decrypted refresh token: AQBpnMWlXVCLXp9hA4Qu79JaReq7HB8jbHolDGDW_GmNAjiOIKUvfYL4-ShA1GAKybd8SfpWWwUlJP6YhN1ORm2uNi3rK40tulR9TCljCvtOVL6ID2E2D3evmmo5mtU1mGU
-I/flutter (10183): Decrypted access token: BQAmrm-xT8dvMcwdptmxwMmBIRHPxKKQqbdPtXPIfjCTitCbOmgwG_7awei8NucVtEf0_HdwtHK7PTLPEHnpyK1UgQxozY4DiYDdtD4gMNhmtzfjiU9PqzLaQM3rxZ0iO4kkjljwnvPDlU_YDEg7FGuh-ztDDWCvij_hYAwlS_aSd7WyeynabYq4LH1M6UXMfnSSzd2p-A
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  runApp(
+    const AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(statusBarColor: Colors.transparent),
+      child: Dyg(),
+    ),
+  );
+}
+
+class Dyg extends StatefulWidget {
+  const Dyg({Key? key}) : super(key: key);
+
+  @override
+  State<Dyg> createState() => _DygState();
+}
+
+class _DygState extends State<Dyg> {
+  static const storage = FlutterSecureStorage();
+  bool loginIsDoneOnce = true;
+  String? accessToken = 'Unknown';
+  String? refreshToken = 'Unknown';
+  Future<void>? tokenCall;
+
+  @override
+  void initState() {
+    super.initState();
+    obtainTokens();
+  }
+
+  Future<void> obtainTokens() async {
+    print('Obtaining tokens now');
+    if (await storage.containsKey(key: 'accessToken')) {
+      print('Access token exists already');
+      final String encryptedAccessToken =
+          await storage.read(key: 'accessToken') ?? '';
+      final String encryptedRefreshToken =
+          await storage.read(key: 'refreshToken') ?? '';
+
+      setState(
+        () {
+          accessToken = decrypt(
+            decryptionKey: config.encryptionKeyForAccessToken,
+            input: encryptedAccessToken,
+          );
+        },
+      );
+      setState(
+        () {
+          refreshToken = decrypt(
+            decryptionKey: config.encryptionKeyForRefreshToken,
+            input: encryptedRefreshToken,
+          );
+        },
+      );
+    } else {
+      print('Access token does not exist');
+      setState(
+        () => loginIsDoneOnce = false,
+      );
+      print('loginIsDoneOnce = $loginIsDoneOnce');
+      setState(() => accessToken = 'Does not exist');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    print('Inside build');
+    return MaterialApp(
+      title: 'Dyg',
+      debugShowCheckedModeBanner: false,
+      home: SafeArea(
+        child: accessToken != 'Unknown'
+            ? (loginIsDoneOnce == false
+                ? const OnboardingPage()
+                : HomePage(
+                    accessToken: accessToken ?? '',
+                    refreshToken: refreshToken ?? '',
+                  ))
+            : Container(
+                child: Text('Waiting for obtain tokens to finish'),
+              ),
+      ),
+    );
+  }
+}

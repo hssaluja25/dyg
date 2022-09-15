@@ -46,3 +46,4 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 lib/services/API/config.dart
+lib/pages/home/temp.txt
