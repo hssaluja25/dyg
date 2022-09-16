@@ -58,22 +58,24 @@ findTopTracks({
     print(topTracks);
   } else if (response.statusCode == 401) {
     print('Access token expired');
-    requestRefreshedAccessToken(refreshToken: refreshToken);
+    bool goOn = await requestRefreshedAccessToken(refreshToken: refreshToken);
 
-    // Obtain the new access token from flutter_secure_storage
-    // and decrypt it.
-    const storage = FlutterSecureStorage();
-    final String encryptedAccessToken =
-        await storage.read(key: 'accessToken') ?? '';
-    accessToken = decrypt(
-      decryptionKey: config.encryptionKeyForAccessToken,
-      input: encryptedAccessToken,
-    );
+    if (goOn) {
+      // Obtain the new access token from flutter_secure_storage
+      // and decrypt it.
+      const storage = FlutterSecureStorage();
+      final String encryptedAccessToken =
+          await storage.read(key: 'accessToken') ?? '';
+      accessToken = decrypt(
+        decryptionKey: config.encryptionKeyForAccessToken,
+        input: encryptedAccessToken,
+      );
 
-    // Recursively call this method again
-    findTopTracks(
-      accessToken: accessToken,
-      refreshToken: refreshToken,
-    );
+      // Recursively call this method again
+      findTopTracks(
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+      );
+    }
   }
 }

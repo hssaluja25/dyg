@@ -5,9 +5,10 @@ import 'package:spotify/services/API/encrypt_store.dart';
 import 'config.dart' as config;
 
 /// Once retrieved, encrypted access token is stored in flutter_secure_storage.
-requestRefreshedAccessToken({required String refreshToken}) async {
+Future<bool> requestRefreshedAccessToken({required String refreshToken}) async {
   print('Requesting new access token:');
   print('Refresh token is $refreshToken');
+  bool refreshingDone = false;
   final Uri uri = Uri.parse('https://accounts.spotify.com/api/token');
   final response = await http.post(
     uri,
@@ -32,5 +33,7 @@ requestRefreshedAccessToken({required String refreshToken}) async {
       storageKey: 'accessToken',
       input: map['access_token'],
     );
+    refreshingDone = true;
   }
+  return refreshingDone;
 }
