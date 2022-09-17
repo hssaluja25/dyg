@@ -22,16 +22,19 @@ Future<bool> requestRefreshedAccessToken({required String refreshToken}) async {
       'Authorization': config.authorization,
     },
   );
-  print(response.body);
   if (response.statusCode == 200) {
     print('Successfully retrieved new access tokens');
     Map map = jsonDecode(response.body);
-    print(map);
 
     encryptAndStore(
       encryptionKey: config.encryptionKeyForAccessToken,
       storageKey: 'accessToken',
       input: map['access_token'],
+    );
+    encryptAndStore(
+      encryptionKey: config.encryptionKeyForRefreshToken,
+      storageKey: 'refreshToken',
+      input: map['refresh_token'],
     );
     refreshingDone = true;
   }
