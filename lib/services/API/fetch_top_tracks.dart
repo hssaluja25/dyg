@@ -9,7 +9,10 @@ import 'decrypt.dart';
 import 'package:spotify/services/API/config.dart' as config;
 
 /// Fetches short term top tracks
-findTopTracks({
+/// Returns: List<bool, List<Map<String, String>>> where
+/// bool = Whether the API call has completed
+/// List<Map<String, String>> = Info about user's top tracks
+Future<List> findTopTracks({
   required String accessToken,
   required String refreshToken,
 }) async {
@@ -27,6 +30,8 @@ findTopTracks({
     final map = jsonDecode(response.body);
 
     int total = map['items'].length;
+
+    final spotifyInstalled = await isSpotifyInstalled();
 
     // Stores info for all top tracks
     List<Map<String, String>> topTracks = [];
@@ -46,16 +51,16 @@ findTopTracks({
       trackInfo['preview'] =
           map["items"][i]['preview_url'] ?? 'Preview not available';
 
-      final spotifyInstalled = await isSpotifyInstalled();
-
       if (spotifyInstalled) {
         trackInfo["url"] = map['items'][i]['uri'];
       } else {
         trackInfo["url"] = map["items"][i]['external_urls']['spotify'];
       }
+
       topTracks.add(trackInfo);
     }
-    print(topTracks);
+    // API call has been successfully completed.
+    return [true, topTracks];
   } else if (response.statusCode == 401) {
     print('Access token expired');
     bool goOn = await requestRefreshedAccessToken(refreshToken: refreshToken);
@@ -66,16 +71,17 @@ findTopTracks({
       const storage = FlutterSecureStorage();
       final String encryptedAccessToken =
           await storage.read(key: 'accessToken') ?? '';
-      accessToken = decrypt(
+      String newAccessToken = decrypt(
         decryptionKey: config.encryptionKeyForAccessToken,
         input: encryptedAccessToken,
       );
 
       // Recursively call this method again
       findTopTracks(
-        accessToken: accessToken,
+        accessToken: newAccessToken,
         refreshToken: refreshToken,
       );
     }
   }
+  return [false, []];
 }

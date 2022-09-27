@@ -20,7 +20,6 @@ void encryptAndStore(
   final iv = encrypt.IV.fromLength(16);
   final encrypter = encrypt.Encrypter(encrypt.AES(key));
   final encrypted = encrypter.encrypt(input, iv: iv);
-  debugPrint(encrypted.base64);
   // Store
   // Create storage
   const storage = FlutterSecureStorage();
