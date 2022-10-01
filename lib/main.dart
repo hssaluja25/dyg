@@ -30,13 +30,12 @@ class _DygState extends State<Dyg> {
   bool loginIsDoneOnce = true;
   String? accessToken;
   String? refreshToken;
-  bool obtainTokensFinished = false;
 
-  @override
-  void initState() {
-    super.initState();
-    obtainTokens();
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   obtainTokens();
+  // }
 
   Future<void> obtainTokens() async {
     print('Obtaining tokens now');
@@ -46,31 +45,21 @@ class _DygState extends State<Dyg> {
           await storage.read(key: 'accessToken') ?? '';
       final String encryptedRefreshToken =
           await storage.read(key: 'refreshToken') ?? '';
-
-      setState(
-        () {
-          accessToken = decrypt(
-            decryptionKey: config.encryptionKeyForAccessToken,
-            input: encryptedAccessToken,
-          );
-        },
+      accessToken = decrypt(
+        decryptionKey: config.encryptionKeyForAccessToken,
+        input: encryptedAccessToken,
       );
-      setState(
-        () {
-          refreshToken = decrypt(
-            decryptionKey: config.encryptionKeyForRefreshToken,
-            input: encryptedRefreshToken,
-          );
-        },
+      refreshToken = decrypt(
+        decryptionKey: config.encryptionKeyForRefreshToken,
+        input: encryptedRefreshToken,
       );
+      print("Access token is $accessToken");
+      print('Refresh token is $refreshToken');
     } else {
       print('Access token does not exist');
-      setState(
-        () => loginIsDoneOnce = false,
-      );
+      loginIsDoneOnce = false;
       print('loginIsDoneOnce = $loginIsDoneOnce');
     }
-    setState(() => obtainTokensFinished = true);
   }
 
   @override
@@ -80,15 +69,20 @@ class _DygState extends State<Dyg> {
       title: 'Dyg',
       debugShowCheckedModeBanner: false,
       home: SafeArea(
-        child: obtainTokensFinished == true
-            ? (loginIsDoneOnce == false
-                ? const OnboardingPage()
-                : HomePage(
-                    accessToken: accessToken ?? '',
-                    refreshToken: refreshToken ?? '',
-                  ))
-            : // Waiting for obtain tokens to finish
-            Scaffold(
+        child: FutureBuilder(
+          future: obtainTokens(),
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              return loginIsDoneOnce == false
+                  ? const OnboardingPage()
+                  : HomePage(
+                      accessToken: accessToken ?? '',
+                      refreshToken: refreshToken ?? '',
+                    );
+            } else {
+              print('Conection State is ${snapshot.connectionState}');
+              // Waiting for obtain tokens to finish
+              return Scaffold(
                 body: Container(
                   width: double.infinity,
                   height: double.infinity,
@@ -96,7 +90,10 @@ class _DygState extends State<Dyg> {
                   color: const Color(0xFFF2C4C2),
                   child: const CircularProgressIndicator(),
                 ),
-              ),
+              );
+            }
+          },
+        ),
       ),
     );
   }

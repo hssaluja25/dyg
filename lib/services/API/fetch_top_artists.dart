@@ -43,24 +43,22 @@ findTopArtists(
     }
   } else if (response.statusCode == 401) {
     print('Access token expired');
-    bool goOn = await requestRefreshedAccessToken(refreshToken: refreshToken);
+    await requestRefreshedAccessToken(refreshToken: refreshToken);
 
-    if (goOn) {
-      // Obtain the new access token from flutter_secure_storage
-      // and decrypt it.
-      const storage = FlutterSecureStorage();
-      final String encryptedAccessToken =
-          await storage.read(key: 'accessToken') ?? '';
-      accessToken = decrypt(
-        decryptionKey: config.encryptionKeyForAccessToken,
-        input: encryptedAccessToken,
-      );
+    // Obtain the new access token from flutter_secure_storage
+    // and decrypt it.
+    const storage = FlutterSecureStorage();
+    final String encryptedAccessToken =
+        await storage.read(key: 'accessToken') ?? '';
+    accessToken = decrypt(
+      decryptionKey: config.encryptionKeyForAccessToken,
+      input: encryptedAccessToken,
+    );
 
-      // Recursively call this method again
-      findTopArtists(
-          accessToken: accessToken,
-          refreshToken: refreshToken,
-          spotifyInstalled: spotifyInstalled);
-    }
+    // Recursively call this method again
+    return await findTopArtists(
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+        spotifyInstalled: spotifyInstalled);
   }
 }
