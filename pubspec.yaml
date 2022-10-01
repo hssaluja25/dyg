@@ -37,6 +37,7 @@ flutter:
     - assets/images/home/bg-design.svg
     - assets/images/home/trial.png
 
+    - assets/images/no_internet.jpg
   fonts:
     - family: Syne
       fonts:

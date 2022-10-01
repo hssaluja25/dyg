@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:convert';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -14,6 +15,14 @@ Future findTopTracks({
   required String refreshToken,
 }) async {
   print("Finding user's top tracks future of FutureBuilder is being executed");
+  // If user is not connected to an internet connection, the following would
+  // throw an error which would be caught by snapshot.hasError part of FutureBuilder
+  // in home.dart
+  final result = await InternetAddress.lookup('example.com')
+      .timeout(const Duration(seconds: 2));
+  if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+    print('Connected to the internet');
+  }
   final Uri uri = Uri.parse(
       'https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=50');
   final response = await http.get(

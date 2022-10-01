@@ -191,6 +191,29 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ],
               );
+            } else if (snapshot.hasError) {
+              return Container(
+                color: Colors.white,
+                child: Column(
+                  children: [
+                    Expanded(
+                      flex: 5,
+                      child: Image.asset('assets/images/no_internet.jpg'),
+                    ),
+                    const Expanded(
+                      flex: 2,
+                      child: Text(
+                        'No Internet Connection',
+                        style: TextStyle(
+                          fontFamily: 'Syne',
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
             } else {
               print('State is:');
               print(snapshot.connectionState);
