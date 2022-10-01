@@ -9,14 +9,12 @@ import 'decrypt.dart';
 import 'package:spotify/services/API/config.dart' as config;
 
 /// Fetches short term top tracks
-/// Returns: List<bool, List<Map<String, String>>> where
-/// bool = Whether the API call has completed
-/// List<Map<String, String>> = Info about user's top tracks
-Future<List> findTopTracks({
+/// Returns a list of maps with info about user's top tracks
+Future findTopTracks({
   required String accessToken,
   required String refreshToken,
 }) async {
-  print("Finding user's top tracks");
+  print("Finding user's top tracks future of FutureBuilder is being executed");
   final Uri uri = Uri.parse(
       'https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=50');
   final response = await http.get(
@@ -59,29 +57,27 @@ Future<List> findTopTracks({
 
       topTracks.add(trackInfo);
     }
-    // API call has been successfully completed.
-    return [true, topTracks];
+    print('toptracks is $topTracks');
+    print('Returning topTracks list');
+    return topTracks;
   } else if (response.statusCode == 401) {
     print('Access token expired');
-    bool goOn = await requestRefreshedAccessToken(refreshToken: refreshToken);
+    await requestRefreshedAccessToken(refreshToken: refreshToken);
 
-    if (goOn) {
-      // Obtain the new access token from flutter_secure_storage
-      // and decrypt it.
-      const storage = FlutterSecureStorage();
-      final String encryptedAccessToken =
-          await storage.read(key: 'accessToken') ?? '';
-      String newAccessToken = decrypt(
-        decryptionKey: config.encryptionKeyForAccessToken,
-        input: encryptedAccessToken,
-      );
+    // Obtain the new access token from flutter_secure_storage
+    // and decrypt it.
+    const storage = FlutterSecureStorage();
+    final String encryptedAccessToken =
+        await storage.read(key: 'accessToken') ?? '';
+    String newAccessToken = decrypt(
+      decryptionKey: config.encryptionKeyForAccessToken,
+      input: encryptedAccessToken,
+    );
 
-      // Recursively call this method again
-      findTopTracks(
-        accessToken: newAccessToken,
-        refreshToken: refreshToken,
-      );
-    }
+    // Recursively call this method again
+    return await findTopTracks(
+      accessToken: newAccessToken,
+      refreshToken: refreshToken,
+    );
   }
-  return [false, []];
 }

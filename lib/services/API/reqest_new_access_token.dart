@@ -7,7 +7,7 @@ import 'config.dart' as config;
 import 'decrypt.dart';
 
 /// Once retrieved, encrypted access token is stored in flutter_secure_storage.
-Future<bool> requestRefreshedAccessToken({required String refreshToken}) async {
+Future<void> requestRefreshedAccessToken({required String refreshToken}) async {
   print('Requesting new access token:');
   print('Refresh token is $refreshToken');
   final Uri uri = Uri.parse('https://accounts.spotify.com/api/token');
@@ -28,18 +28,16 @@ Future<bool> requestRefreshedAccessToken({required String refreshToken}) async {
     print('Successfully retrieved new access tokens');
     Map map = jsonDecode(response.body);
 
-    encryptAndStore(
+    String encryptedAccessTokken = encode(
       encryptionKey: config.encryptionKeyForAccessToken,
-      storageKey: 'accessToken',
       input: map['access_token'],
     );
-    encryptAndStore(
+    store(key: 'accessToken', input: encryptedAccessTokken);
+    String encryptedRefreshToken = encode(
       encryptionKey: config.encryptionKeyForRefreshToken,
-      storageKey: 'refreshToken',
       input: map['refresh_token'],
     );
-    bool refreshingDone = true;
-    return refreshingDone;
+    store(key: 'refreshToken', input: encryptedRefreshToken);
   }
   // Refresh token has been revoked.
   else if (response.statusCode == 400) {
@@ -59,5 +57,4 @@ Future<bool> requestRefreshedAccessToken({required String refreshToken}) async {
   } else {
     print('There was an error obtaining new access token');
   }
-  return false;
 }

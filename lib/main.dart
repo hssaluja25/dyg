@@ -92,8 +92,9 @@ class _DygState extends State<Dyg> {
                 body: Container(
                   width: double.infinity,
                   height: double.infinity,
-                  color: Color(0xFFF2C4C2),
-                  child: CircularProgressIndicator(),
+                  alignment: Alignment.center,
+                  color: const Color(0xFFF2C4C2),
+                  child: const CircularProgressIndicator(),
                 ),
               ),
       ),

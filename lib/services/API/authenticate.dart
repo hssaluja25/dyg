@@ -8,9 +8,10 @@ import 'package:pkce/pkce.dart';
 
 import '../../pages/home/home.dart';
 import 'encrypt_store.dart';
-// config contains client ID and authorization
-// which you should create by visiting
-// https://developer.spotify.com/dashboard/applications
+// config contains client ID, authorization, which you should create by
+// visiting https://developer.spotify.com/dashboard/applications
+// It also contains encryption keys for access and refresh tokens which are just
+// random 32 length strings
 import 'config.dart' as config;
 import 'generate_random_string.dart';
 
@@ -24,9 +25,10 @@ class AuthenticationException implements Exception {
   AuthenticationException(this.message);
 }
 
+/// BuildContext is required for opening home page
 void authenticate({required BuildContext context}) async {
   // App specific variables
-  final String clientId = config.clientId;
+  const String clientId = config.clientId;
 
   final pkcePair = PkcePair.generate();
   final String codeVerifier = pkcePair.codeVerifier;
@@ -78,16 +80,16 @@ void authenticate({required BuildContext context}) async {
       final map = jsonDecode(response.body);
       final String accessToken = map["access_token"];
       final String refreshToken = map["refresh_token"];
-      encryptAndStore(
+      String encryptedAccessTokken = encode(
         encryptionKey: config.encryptionKeyForAccessToken,
-        storageKey: 'accessToken',
         input: accessToken,
       );
-      encryptAndStore(
+      store(key: 'accessToken', input: encryptedAccessTokken);
+      String encryptedRefreshToken = encode(
         encryptionKey: config.encryptionKeyForRefreshToken,
-        storageKey: 'refreshToken',
         input: refreshToken,
       );
+      store(key: 'refreshToken', input: encryptedRefreshToken);
 
       openHomePage(
           context: context,
