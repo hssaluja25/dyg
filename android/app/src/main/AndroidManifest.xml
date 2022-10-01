@@ -1,8 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.analysis.spotify">
-    <queries>
-        <package android:name="com.spotify.music"/>
-    </queries>
    <application
         android:label="Dyg"
         android:name="${applicationName}"

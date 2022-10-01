@@ -10,6 +10,7 @@ class CardCreate extends StatefulWidget {
       required this.img,
       required this.preview,
       required this.url,
+      required this.fallbackUrl,
       required this.player,
       super.key}) {
     cardDimension = (width - 20) / 2;
@@ -19,6 +20,7 @@ class CardCreate extends StatefulWidget {
   final String img;
   final String preview;
   final String url;
+  final String fallbackUrl;
   final AudioPlayer player;
   late final double cardDimension;
 
@@ -82,6 +84,7 @@ class _CardCreateState extends State<CardCreate> {
                 name: widget.name,
                 preview: widget.preview,
                 url: widget.url,
+                fallbackUrl: widget.fallbackUrl,
               ),
             ],
           ),
@@ -98,11 +101,13 @@ class BottomRow extends StatelessWidget {
       required this.name,
       required this.preview,
       required this.url,
+      required this.fallbackUrl,
       Key? key})
       : super(key: key);
   final String name;
   final String preview;
   final String url;
+  final String fallbackUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -134,9 +139,12 @@ class BottomRow extends StatelessWidget {
               IconButton(
                 onPressed: () {
                   final Uri spotifyShareLink = Uri.parse(url);
+                  final Uri fallbackUri = Uri.parse(fallbackUrl);
                   () async {
                     if (await canLaunchUrl(spotifyShareLink)) {
                       launchUrl(spotifyShareLink);
+                    } else if (await canLaunchUrl(fallbackUri)) {
+                      launchUrl(fallbackUri);
                     } else {
                       ScaffoldMessenger.of(context)
                         ..removeCurrentSnackBar()

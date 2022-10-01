@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:spotify/services/API/reqest_new_access_token.dart';
-import 'package:spotify/services/API/spotify_installed.dart';
 import 'decrypt.dart';
 
 import 'package:spotify/services/API/config.dart' as config;
@@ -29,8 +28,6 @@ Future findTopTracks({
 
     int total = map['items'].length;
 
-    final spotifyInstalled = await isSpotifyInstalled();
-
     // Stores info for all top tracks
     List<Map<String, String>> topTracks = [];
     for (int i = 0; i < total; i++) {
@@ -48,12 +45,8 @@ Future findTopTracks({
       // ! Hence no preview url link.
       trackInfo['preview'] =
           map["items"][i]['preview_url'] ?? 'Preview not available';
-
-      if (spotifyInstalled) {
-        trackInfo["url"] = map['items'][i]['uri'];
-      } else {
-        trackInfo["url"] = map["items"][i]['external_urls']['spotify'];
-      }
+      trackInfo["url"] = map['items'][i]['uri'];
+      trackInfo["fallbackUrl"] = map["items"][i]['external_urls']['spotify'];
 
       topTracks.add(trackInfo);
     }
