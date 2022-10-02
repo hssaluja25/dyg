@@ -80,7 +80,8 @@ class _DygState extends State<Dyg> {
                       refreshToken: refreshToken ?? '',
                     );
             } else {
-              print('Conection State is ${snapshot.connectionState}');
+              print(
+                  'Meanwhile, conection state is ${snapshot.connectionState}');
               // Waiting for obtain tokens to finish
               return Scaffold(
                 body: Container(
