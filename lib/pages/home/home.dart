@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:spotify/pages/widgets/card.dart';
 import 'package:spotify/services/API/fetch_top_tracks.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:just_audio/just_audio.dart';
+
+import 'widgets/scrolling_area.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage(
@@ -106,86 +107,13 @@ class _HomePageState extends State<HomePage> {
                       width: width,
                       height: 500,
                       child: ListView(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              CardCreate(
-                                width: width,
-                                player: player,
-                                name: topTracks[0]['name'] ?? '',
-                                img: topTracks[0]['img'] ?? '',
-                                preview: topTracks[0]['preview'] ?? '',
-                                url: topTracks[0]['url'] ?? '',
-                                fallbackUrl: topTracks[0]['fallbackUrl'] ?? '',
-                              ),
-                              CardCreate(
-                                width: width,
-                                player: player,
-                                name: topTracks[1]['name'] ?? '',
-                                img: topTracks[1]['img'] ?? '',
-                                preview: topTracks[1]['preview'] ?? '',
-                                url: topTracks[1]['url'] ?? '',
-                                fallbackUrl: topTracks[1]['fallbackUrl'] ?? '',
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              CardCreate(
-                                width: width,
-                                player: player,
-                                name: topTracks[2]['name'] ?? '',
-                                img: topTracks[2]['img'] ?? '',
-                                preview: topTracks[2]['preview'] ?? '',
-                                url: topTracks[2]['url'] ?? '',
-                                fallbackUrl: topTracks[2]['fallbackUrl'] ?? '',
-                              ),
-                              CardCreate(
-                                width: width,
-                                player: player,
-                                name: topTracks[3]['name'] ?? '',
-                                img: topTracks[3]['img'] ?? '',
-                                preview: topTracks[3]['preview'] ?? '',
-                                url: topTracks[3]['url'] ?? '',
-                                fallbackUrl: topTracks[3]['fallbackUrl'] ?? '',
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              CardCreate(
-                                width: width,
-                                player: player,
-                                name: topTracks[4]['name'] ?? '',
-                                img: topTracks[4]['img'] ?? '',
-                                preview: topTracks[4]['preview'] ?? '',
-                                url: topTracks[4]['url'] ?? '',
-                                fallbackUrl: topTracks[4]['fallbackUrl'] ?? '',
-                              ),
-                              CardCreate(
-                                width: width,
-                                player: player,
-                                name: topTracks[5]['name'] ?? '',
-                                img: topTracks[5]['img'] ?? '',
-                                preview: topTracks[5]['preview'] ?? '',
-                                url: topTracks[5]['url'] ?? '',
-                                fallbackUrl: topTracks[5]['fallbackUrl'] ?? '',
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                        ],
+                        cacheExtent: 200,
+                        addAutomaticKeepAlives: false,
+                        children: createScrollingArea(
+                          topTracks: topTracks,
+                          width: width,
+                          player: player,
+                        ),
                       ),
                     ),
                   ),

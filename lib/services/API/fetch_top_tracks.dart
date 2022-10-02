@@ -59,6 +59,11 @@ Future findTopTracks({
 
       topTracks.add(trackInfo);
     }
+    bool odd = total % 2 == 0 ? false : true;
+    // We don't want odd number of top tracks
+    if (odd) {
+      topTracks.removeAt(total - 1);
+    }
     print('toptracks is $topTracks');
     print('Returning topTracks list');
     return topTracks;
