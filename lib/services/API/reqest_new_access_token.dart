@@ -1,8 +1,6 @@
-import 'dart:convert';
-
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:http/http.dart' as http;
-import 'package:spotify/services/API/encrypt_store.dart';
+import 'package:dio/dio.dart';
+import 'package:dyg/services/API/encrypt_store.dart';
 import 'config.dart' as config;
 import 'decrypt.dart';
 
@@ -12,22 +10,24 @@ Future<dynamic> requestRefreshedAccessToken(
   print('Requesting new access token:');
   print('Refresh token is $refreshToken');
   final Uri uri = Uri.parse('https://accounts.spotify.com/api/token');
-  final response = await http.post(
-    uri,
-    body: {
+  final response = await Dio().post(
+    'https://accounts.spotify.com/api/token',
+    options: Options(
+      headers: {
+        'Content_Type': 'application/x-www-form-urlencoded',
+        'Authorization': config.authorization,
+      },
+    ),
+    data: {
       'client_id': config.clientId,
       'grant_type': 'refresh_token',
       'refresh_token': refreshToken,
     },
-    headers: {
-      'Content_Type': 'application/x-www-form-urlencoded',
-      'Authorization': config.authorization,
-    },
   );
-  print(response.body);
+  print(response.data);
   if (response.statusCode == 200) {
     print('Successfully retrieved new access tokens');
-    Map map = jsonDecode(response.body);
+    final map = Map<String, dynamic>.from(response.data);
 
     // Encrypt and store access token for future use (On app restart, this access
     // token would be obtained from storage.)

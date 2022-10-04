@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 // For setting preferred orientation
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:spotify/pages/onboarding/onboarding.dart';
-import 'package:spotify/services/API/config.dart' as config;
-import 'package:spotify/services/API/decrypt.dart';
+import 'package:dyg/pages/onboarding/onboarding.dart';
+import 'package:dyg/services/API/config.dart' as config;
+import 'package:dyg/services/API/decrypt.dart';
 import 'pages/home/home.dart';
 
 void main() {
@@ -30,12 +30,6 @@ class _DygState extends State<Dyg> {
   bool loginIsDoneOnce = true;
   String? accessToken;
   String? refreshToken;
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   obtainTokens();
-  // }
 
   Future<void> obtainTokens() async {
     print('Obtaining tokens now');

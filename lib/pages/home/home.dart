@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:spotify/services/API/fetch_top_artists.dart';
-import 'package:spotify/services/API/fetch_top_tracks.dart';
+import 'package:dyg/services/API/fetch_top_artists.dart';
+import 'package:dyg/services/API/fetch_top_tracks.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:just_audio/just_audio.dart';
 

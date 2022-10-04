@@ -1,9 +1,7 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_web_auth/flutter_web_auth.dart';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 import 'package:pkce/pkce.dart';
 
 import '../../pages/home/home.dart';
@@ -60,24 +58,26 @@ void authenticate({required BuildContext context}) async {
 
     // Use this authentication code to get an access token
     final Uri uri2 = Uri.parse('https://accounts.spotify.com/api/token/');
-    final response = await http.post(
-      uri2,
-      body: {
+    final response = await Dio().post(
+      'https://accounts.spotify.com/api/token/',
+      options: Options(
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          "Authorization": config.authorization,
+        },
+      ),
+      data: {
         "grant_type": "authorization_code",
         "code": code,
         "redirect_uri": "com.analysis.spotify://login-callback",
         "client_id": clientId,
         "code_verifier": codeVerifier,
       },
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        "Authorization": config.authorization,
-      },
     );
 
     // Successfully received the access and refresh tokens.
     if (response.statusCode == 200) {
-      final map = jsonDecode(response.body);
+      final map = Map<String, dynamic>.from(response.data);
       final String accessToken = map["access_token"];
       final String refreshToken = map["refresh_token"];
       String encryptedAccessTokken = encode(

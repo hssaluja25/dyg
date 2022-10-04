@@ -1,7 +1,6 @@
-import 'dart:convert';
+import 'package:dio/dio.dart';
 import 'dart:io';
-import 'package:http/http.dart' as http;
-import 'package:spotify/services/API/reqest_new_access_token.dart';
+import 'package:dyg/services/API/reqest_new_access_token.dart';
 
 /// Fetches short term (4 weeks) top artists
 /// Returns a list of maps with info about user's top artists
@@ -18,17 +17,17 @@ findTopArtists({
   if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
     print('Connected to the internet');
   }
-  final Uri uri = Uri.parse(
-      'https://api.spotify.com/v1/me/top/artists?time_range=short_term&limit=50');
-  final response = await http.get(
-    uri,
-    headers: {
-      "Authorization": "Bearer $accessToken",
-    },
+  final response = await Dio().get(
+    'https://api.spotify.com/v1/me/top/artists?time_range=short_term&limit=50',
+    options: Options(
+      headers: {
+        "Authorization": "Bearer $accessToken",
+      },
+    ),
   );
-  print(response.body);
+  print(response.data);
   if (response.statusCode == 200) {
-    final map = jsonDecode(response.body);
+    final map = Map<String, dynamic>.from(response.data);
 
     int total = map['items'].length;
 
