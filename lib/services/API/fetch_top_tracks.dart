@@ -1,12 +1,7 @@
-import 'dart:io';
 import 'dart:convert';
-
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:spotify/services/API/reqest_new_access_token.dart';
-import 'decrypt.dart';
-
-import 'package:spotify/services/API/config.dart' as config;
 
 /// Fetches short term top tracks
 /// Returns a list of maps with info about user's top tracks
@@ -42,7 +37,7 @@ Future findTopTracks({
     for (int i = 0; i < total; i++) {
       // Stores track name, album art, share link and preview link.
       Map<String, String> trackInfo = {};
-      // Add track name ✔
+      // Add track name
       trackInfo["name"] = map["items"][i]['name'];
       // 300x300 album art
       trackInfo["img"] = map["items"][i]['album']['images'][1]['url'];

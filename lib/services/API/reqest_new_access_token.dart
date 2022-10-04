@@ -67,7 +67,7 @@ Future<dynamic> requestRefreshedAccessToken(
     print('Is new refresh token same as old?');
     print(newRefreshToken == refreshToken);
     // Once new refresh token has been obtained from storage, use it to obtain new access token
-    await requestRefreshedAccessToken(refreshToken: newRefreshToken);
+    return await requestRefreshedAccessToken(refreshToken: newRefreshToken);
   } else {
     print('There was an error obtaining new access token');
   }

@@ -12,9 +12,11 @@ class CardCreate extends StatefulWidget {
       required this.url,
       required this.fallbackUrl,
       required this.player,
+      required this.playPreview,
       super.key}) {
     cardDimension = (width - 20) / 2;
   }
+  final bool playPreview;
   final double width;
   final String name;
   final String img;
@@ -31,94 +33,68 @@ class CardCreate extends StatefulWidget {
 class _CardCreateState extends State<CardCreate> {
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      // onTap: () async {
-      //  // ! If i have clicked on some card while the audio is playing, instead of playing the songs simultaneously the previous song should stop.
-      //   // Preview NOT playing
-      //   if (widget.player.playing == false) {
-      //     if (widget.preview != 'Preview not available') {
-      //       // Load a URL
-      //       final duration = await widget.player.setUrl(widget.preview);
-      //       // Play without waiting for completion
-      //       widget.player.play();
-      //       // * Play while waiting for completion
-      //       // await widget.player.play();
-      //     } else {
-      //       if (!mounted) return;
-      //       ScaffoldMessenger.of(context)
-      //         ..removeCurrentSnackBar()
-      //         ..showSnackBar(const SnackBar(
-      //           content: Text('Sorry! Preview not available'),
-      //         ));
-      //     }
-      //   }
-      //   // Preview is playing
-      //   else if (widget.player.playing == true) {
-      //     await widget.player.pause();
-      //   }
-      // },
-      child: SizedBox(
-        width: widget.cardDimension,
-        height: widget.cardDimension,
-        child: Card(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-          // If you use CircularBorder and you wrap the image (or any other widget)
-          // in Card, the child widget won't be clipped according to the Card shape.
-          // So you must use use ClipRRect and specify borderRadius. That's it.
-          // ClipRRect is a widget that clips its child using a rounded rectangle.
-          elevation: 3,
-          child: InkWell(
-            onTap: () async {
-              // ! If i have clicked on some card while the audio is playing, instead of playing the songs simultaneously the previous song should stop.
-              // Preview NOT playing
-              if (widget.player.playing == false) {
-                if (widget.preview != 'Preview not available') {
-                  // Load a URL
-                  final duration = await widget.player.setUrl(widget.preview);
-                  // Play without waiting for completion
-                  widget.player.play();
-                  // * Play while waiting for completion
-                  // await widget.player.play();
-                } else {
-                  if (!mounted) return;
-                  ScaffoldMessenger.of(context)
-                    ..removeCurrentSnackBar()
-                    ..showSnackBar(const SnackBar(
-                      content: Text('Sorry! Preview not available'),
-                    ));
+    return SizedBox(
+      width: widget.cardDimension,
+      height: widget.cardDimension,
+      child: Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        // If you use CircularBorder and you wrap the image (or any other widget)
+        // in Card, the child widget won't be clipped according to the Card shape.
+        // So you must use use ClipRRect and specify borderRadius. That's it.
+        // ClipRRect is a widget that clips its child using a rounded rectangle.
+        elevation: 3,
+        child: InkWell(
+          onTap: widget.playPreview
+              ? () async {
+                  // ! If i have clicked on some card while the audio is playing, instead of playing the songs simultaneously the previous song should stop.
+                  // Preview NOT playing
+                  if (widget.player.playing == false) {
+                    if (widget.preview != 'Preview not available') {
+                      // Load a URL
+                      final duration =
+                          await widget.player.setUrl(widget.preview);
+                      // Play without waiting for completion
+                      widget.player.play();
+                      // * Play while waiting for completion
+                      // await widget.player.play();
+                    } else {
+                      if (!mounted) return;
+                      ScaffoldMessenger.of(context)
+                        ..removeCurrentSnackBar()
+                        ..showSnackBar(const SnackBar(
+                          content: Text('Sorry! Preview not available'),
+                        ));
+                    }
+                  }
+                  // Preview is playing
+                  else if (widget.player.playing == true) {
+                    await widget.player.pause();
+                  }
                 }
-              }
-              // Preview is playing
-              else if (widget.player.playing == true) {
-                await widget.player.pause();
-              }
-            },
-            child: Stack(
-              children: [
-                // Album Art/Artist Page
-                Ink(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    image: DecorationImage(
-                      image: NetworkImage(
-                        widget.img,
-                      ),
-                      fit: BoxFit.cover,
+              : () {},
+          child: Stack(
+            children: [
+              // Album Art/Artist Page
+              Ink(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  image: DecorationImage(
+                    image: NetworkImage(
+                      widget.img,
                     ),
+                    fit: BoxFit.cover,
                   ),
                 ),
+              ),
 
-                // The row at the bottom containing the song track & the share button
-                BottomRow(
-                  cardDimension: widget.cardDimension,
-                  name: widget.name,
-                  preview: widget.preview,
-                  url: widget.url,
-                  fallbackUrl: widget.fallbackUrl,
-                ),
-              ],
-            ),
+              // The row at the bottom containing the song track & the share button
+              BottomRow(
+                cardDimension: widget.cardDimension,
+                name: widget.name,
+                url: widget.url,
+                fallbackUrl: widget.fallbackUrl,
+              ),
+            ],
           ),
         ),
       ),
@@ -127,17 +103,15 @@ class _CardCreateState extends State<CardCreate> {
 }
 
 class BottomRow extends StatelessWidget {
-  final double cardDimension;
   const BottomRow(
       {required this.cardDimension,
       required this.name,
-      required this.preview,
       required this.url,
       required this.fallbackUrl,
       Key? key})
       : super(key: key);
+  final double cardDimension;
   final String name;
-  final String preview;
   final String url;
   final String fallbackUrl;
 

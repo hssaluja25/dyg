@@ -4,32 +4,34 @@ import 'package:just_audio/just_audio.dart';
 import '../../widgets/card.dart';
 
 List<Widget> createScrollingArea(
-    {required List topTracks,
+    {required bool playPreview,
+    required List usersTopList,
     required double width,
     required AudioPlayer player}) {
-  int total = topTracks.length;
-  print('Number of top songs is $total');
+  int total = usersTopList.length;
+  print('Number of top songs/artists is $total');
   int rows = total ~/ 2;
   print('Number of rows required is $rows');
 
   // This list would be passed to ListView
   List<Widget> children = [];
-  int currentSong = 0;
+  int currentSongOrArtist = 0;
   for (int row = 0; row < rows; row++) {
     List<Widget> childrenOfRow = [];
     for (int card = 0; card < 2; card += 1) {
       childrenOfRow.add(
         CardCreate(
+          playPreview: playPreview,
           width: width,
           player: player,
-          name: topTracks[currentSong]['name'] ?? '',
-          img: topTracks[currentSong]['img'] ?? '',
-          preview: topTracks[currentSong]['preview'] ?? '',
-          url: topTracks[currentSong]['url'] ?? '',
-          fallbackUrl: topTracks[currentSong]['fallbackUrl'] ?? '',
+          name: usersTopList[currentSongOrArtist]['name'] ?? '',
+          img: usersTopList[currentSongOrArtist]['img'] ?? '',
+          preview: usersTopList[currentSongOrArtist]['preview'] ?? '',
+          url: usersTopList[currentSongOrArtist]['url'] ?? '',
+          fallbackUrl: usersTopList[currentSongOrArtist]['fallbackUrl'] ?? '',
         ),
       );
-      currentSong += 1;
+      currentSongOrArtist += 1;
     }
     children.add(
       Row(

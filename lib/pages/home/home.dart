@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:spotify/services/API/fetch_top_artists.dart';
 import 'package:spotify/services/API/fetch_top_tracks.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:just_audio/just_audio.dart';
@@ -37,16 +38,21 @@ class _HomePageState extends State<HomePage> {
     return SafeArea(
       child: Scaffold(
         body: FutureBuilder(
-          future: findTopTracks(
-              accessToken: accessToken, refreshToken: refreshToken),
+          future: showTopTracks
+              ? findTopTracks(
+                  accessToken: accessToken, refreshToken: refreshToken)
+              : findTopArtists(
+                  accessToken: accessToken, refreshToken: refreshToken),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             // The first condition is important when we need to refresh
             // access tokens
             if (snapshot.connectionState == ConnectionState.done &&
                 snapshot.hasData) {
               print('Inside ConnectionState.done');
-              List topTracks = snapshot.data;
-              print('Toptracks value is $topTracks');
+              // This list would contain either user's top tracks or top artists
+              // depending on what the user wants
+              List usersTopList = snapshot.data;
+              print("User's top list is $usersTopList");
               return Stack(
                 children: [
                   SvgPicture.asset(
@@ -110,7 +116,8 @@ class _HomePageState extends State<HomePage> {
                         cacheExtent: 200,
                         addAutomaticKeepAlives: false,
                         children: createScrollingArea(
-                          topTracks: topTracks,
+                          playPreview: showTopTracks,
+                          usersTopList: usersTopList,
                           width: width,
                           player: player,
                         ),
@@ -120,6 +127,8 @@ class _HomePageState extends State<HomePage> {
                 ],
               );
             } else if (snapshot.hasError) {
+              print('There was an error executing the future');
+              print(snapshot.error);
               return Container(
                 color: Colors.white,
                 child: Column(
