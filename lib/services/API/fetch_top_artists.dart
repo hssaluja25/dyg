@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:dio_http_cache/dio_http_cache.dart';
 import 'dart:io';
 import 'package:dyg/services/API/reqest_new_access_token.dart';
 
@@ -17,13 +18,22 @@ findTopArtists({
   if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
     print('Connected to the internet');
   }
-  final response = await Dio().get(
-    'https://api.spotify.com/v1/me/top/artists?time_range=short_term&limit=50',
+
+  DioCacheManager dcm = DioCacheManager(CacheConfig());
+  Options cacheOptions = buildCacheOptions(
+    const Duration(hours: 1),
     options: Options(
       headers: {
-        "Authorization": "Bearer $accessToken",
+        'Authorization': 'Bearer $accessToken',
       },
     ),
+  );
+  Dio dio = Dio();
+  dio.interceptors.add(dcm.interceptor);
+
+  final response = await dio.get(
+    'https://api.spotify.com/v1/me/top/artists?time_range=short_term&limit=50',
+    options: cacheOptions,
   );
   print(response.data);
   if (response.statusCode == 200) {
