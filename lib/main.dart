@@ -1,10 +1,12 @@
+import 'package:dyg/pages/home/widgets/no_connection.dart';
+import 'package:dyg/services/check_connectivity.dart';
 import 'package:flutter/material.dart';
 // For setting preferred orientation
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:dyg/pages/onboarding/onboarding.dart';
 import 'package:dyg/services/API/config.dart' as config;
-import 'package:dyg/services/API/decrypt.dart';
+import 'package:dyg/services/decode.dart';
 import 'pages/home/home.dart';
 
 void main() {
@@ -64,28 +66,43 @@ class _DygState extends State<Dyg> {
       debugShowCheckedModeBanner: false,
       home: SafeArea(
         child: FutureBuilder(
-          future: obtainTokens(),
+          future: checkInternetConnection(),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              return loginIsDoneOnce == false
-                  ? const OnboardingPage()
-                  : HomePage(
-                      accessToken: accessToken ?? '',
-                      refreshToken: refreshToken ?? '',
-                    );
+            if (snapshot.hasData) {
+              // There is internet availability
+              if (snapshot.data) {
+                return FutureBuilder(
+                  future: obtainTokens(),
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done) {
+                      return loginIsDoneOnce == false
+                          ? const OnboardingPage()
+                          : HomePage(
+                              accessToken: accessToken ?? '',
+                              refreshToken: refreshToken ?? '',
+                            );
+                    } else {
+                      print(
+                          'Meanwhile, conection state is ${snapshot.connectionState}');
+                      // Waiting for obtain tokens to finish
+                      return Scaffold(
+                        body: Container(
+                          width: double.infinity,
+                          height: double.infinity,
+                          alignment: Alignment.center,
+                          color: const Color(0xFFF2C4C2),
+                          child: const CircularProgressIndicator(),
+                        ),
+                      );
+                    }
+                  },
+                );
+              } else {
+                // No internet availability
+                return const Scaffold(body: NoConnection());
+              }
             } else {
-              print(
-                  'Meanwhile, conection state is ${snapshot.connectionState}');
-              // Waiting for obtain tokens to finish
-              return Scaffold(
-                body: Container(
-                  width: double.infinity,
-                  height: double.infinity,
-                  alignment: Alignment.center,
-                  color: const Color(0xFFF2C4C2),
-                  child: const CircularProgressIndicator(),
-                ),
-              );
+              return const CircularProgressIndicator();
             }
           },
         ),

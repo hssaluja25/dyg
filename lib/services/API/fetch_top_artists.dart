@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
-import 'dart:io';
 import 'package:dyg/services/API/reqest_new_access_token.dart';
 
 /// Fetches short term (4 weeks) top artists
@@ -10,19 +9,12 @@ findTopArtists({
   required String refreshToken,
 }) async {
   print("Finding user's top artists future of FutureBuilder is being executed");
-  // If user is not connected to an internet connection, the following would
-  // throw an error which would be caught by snapshot.hasError part of FutureBuilder
-  // in home.dart
-  final result = await InternetAddress.lookup('example.com')
-      .timeout(const Duration(seconds: 2));
-  if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-    print('Connected to the internet');
-  }
-
   DioCacheManager dcm = DioCacheManager(CacheConfig());
   Options cacheOptions = buildCacheOptions(
     const Duration(hours: 1),
     options: Options(
+      // Apparently, this needs to be there otherwise on failure (any status code but 200), an exception is thrown.
+      validateStatus: (_) => true,
       headers: {
         'Authorization': 'Bearer $accessToken',
       },

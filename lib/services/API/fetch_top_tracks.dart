@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:dyg/services/API/reqest_new_access_token.dart';
@@ -10,19 +9,11 @@ Future findTopTracks({
   required String refreshToken,
 }) async {
   print("Finding user's top tracks future of FutureBuilder is being executed");
-  // If user is not connected to an internet connection, the following would
-  // throw an error which would be caught by snapshot.hasError part of FutureBuilder
-  // in home.dart
-  final result = await InternetAddress.lookup('example.com')
-      .timeout(const Duration(seconds: 2));
-  if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-    print('Connected to the internet');
-  }
-
   DioCacheManager dcm = DioCacheManager(CacheConfig());
   Options cacheOptions = buildCacheOptions(
     const Duration(hours: 1),
     options: Options(
+      validateStatus: (_) => true,
       headers: {
         'Authorization': 'Bearer $accessToken',
       },
@@ -34,8 +25,9 @@ Future findTopTracks({
     'https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=50',
     options: cacheOptions,
   );
-  // Note that response.data is not a string but _InternalLinkedHashMap<String, dynamic>. Hence we don't need jsonDecode for this. Instead we use Map.from
+  // Note that response.data is not a string but _InternalLinkedHashMap<String, dynamic>. Hence we don't need jsonDecode for this. Instead we use Map.from()
   print(response.data);
+  print(response.statusCode);
   if (response.statusCode == 200) {
     final map = Map<String, dynamic>.from(response.data);
 

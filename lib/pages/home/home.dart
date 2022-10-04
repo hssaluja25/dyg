@@ -4,6 +4,7 @@ import 'package:dyg/services/API/fetch_top_tracks.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:just_audio/just_audio.dart';
 
+import 'widgets/no_connection.dart';
 import 'widgets/scrolling_area.dart';
 
 class HomePage extends StatefulWidget {
@@ -129,29 +130,9 @@ class _HomePageState extends State<HomePage> {
             } else if (snapshot.hasError) {
               print('There was an error executing the future');
               print(snapshot.error);
-              return Container(
-                color: Colors.white,
-                child: Column(
-                  children: [
-                    Expanded(
-                      flex: 5,
-                      child: Image.asset('assets/images/no_internet.jpg'),
-                    ),
-                    const Expanded(
-                      flex: 2,
-                      child: Text(
-                        'No Internet Connection',
-                        style: TextStyle(
-                          fontFamily: 'Syne',
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              );
+              return const NoConnection();
             } else {
+              // Loading...
               print('State is:');
               print(snapshot.connectionState);
               return Container(

@@ -5,13 +5,14 @@ import 'package:dio/dio.dart';
 import 'package:pkce/pkce.dart';
 
 import '../../pages/home/home.dart';
-import 'encrypt_store.dart';
+import '../encode.dart';
+import '../store.dart';
 // config contains client ID, authorization, which you should create by
 // visiting https://developer.spotify.com/dashboard/applications
 // It also contains encryption keys for access and refresh tokens which are just
 // random 32 length strings
 import 'config.dart' as config;
-import 'generate_random_string.dart';
+import '../generate_random_string.dart';
 
 class StateMismatchException implements Exception {
   String message;

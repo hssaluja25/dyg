@@ -1,20 +1,21 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:dio/dio.dart';
-import 'package:dyg/services/API/encrypt_store.dart';
+import 'package:dyg/services/encode.dart';
 import 'config.dart' as config;
-import 'decrypt.dart';
+import '../decode.dart';
+import '../store.dart';
 
 /// Once retrieved, encrypted access token is stored in flutter_secure_storage.
 Future<dynamic> requestRefreshedAccessToken(
     {required String refreshToken}) async {
   print('Requesting new access token:');
   print('Refresh token is $refreshToken');
-  final Uri uri = Uri.parse('https://accounts.spotify.com/api/token');
   final response = await Dio().post(
     'https://accounts.spotify.com/api/token',
     options: Options(
+      validateStatus: (_) => true,
+      contentType: 'application/x-www-form-urlencoded',
       headers: {
-        'Content_Type': 'application/x-www-form-urlencoded',
         'Authorization': config.authorization,
       },
     ),
@@ -24,6 +25,7 @@ Future<dynamic> requestRefreshedAccessToken(
       'refresh_token': refreshToken,
     },
   );
+  print(response.statusCode);
   print(response.data);
   if (response.statusCode == 200) {
     print('Successfully retrieved new access tokens');
