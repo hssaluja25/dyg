@@ -32,31 +32,31 @@ class _CardCreateState extends State<CardCreate> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () async {
-        // ! If i have clicked on some card while the audio is playing, instead of playing the songs simultaneously the previous song should stop.
-        // Preview NOT playing
-        if (widget.player.playing == false) {
-          if (widget.preview != 'Preview not available') {
-            // Load a URL
-            final duration = await widget.player.setUrl(widget.preview);
-            // Play without waiting for completion
-            widget.player.play();
-            // * Play while waiting for completion
-            // await widget.player.play();
-          } else {
-            if (!mounted) return;
-            ScaffoldMessenger.of(context)
-              ..removeCurrentSnackBar()
-              ..showSnackBar(const SnackBar(
-                content: Text('Sorry! Preview not available'),
-              ));
-          }
-        }
-        // Preview is playing
-        else if (widget.player.playing == true) {
-          await widget.player.pause();
-        }
-      },
+      // onTap: () async {
+      //  // ! If i have clicked on some card while the audio is playing, instead of playing the songs simultaneously the previous song should stop.
+      //   // Preview NOT playing
+      //   if (widget.player.playing == false) {
+      //     if (widget.preview != 'Preview not available') {
+      //       // Load a URL
+      //       final duration = await widget.player.setUrl(widget.preview);
+      //       // Play without waiting for completion
+      //       widget.player.play();
+      //       // * Play while waiting for completion
+      //       // await widget.player.play();
+      //     } else {
+      //       if (!mounted) return;
+      //       ScaffoldMessenger.of(context)
+      //         ..removeCurrentSnackBar()
+      //         ..showSnackBar(const SnackBar(
+      //           content: Text('Sorry! Preview not available'),
+      //         ));
+      //     }
+      //   }
+      //   // Preview is playing
+      //   else if (widget.player.playing == true) {
+      //     await widget.player.pause();
+      //   }
+      // },
       child: SizedBox(
         width: widget.cardDimension,
         height: widget.cardDimension,
@@ -68,25 +68,57 @@ class _CardCreateState extends State<CardCreate> {
           // So you must use use ClipRRect and specify borderRadius. That's it.
           // ClipRRect is a widget that clips its child using a rounded rectangle.
           elevation: 3,
-          child: Stack(
-            children: [
-              // Album Art/Artist Page
-              ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: Image.network(
-                  widget.img,
-                  fit: BoxFit.fill,
+          child: InkWell(
+            onTap: () async {
+              // ! If i have clicked on some card while the audio is playing, instead of playing the songs simultaneously the previous song should stop.
+              // Preview NOT playing
+              if (widget.player.playing == false) {
+                if (widget.preview != 'Preview not available') {
+                  // Load a URL
+                  final duration = await widget.player.setUrl(widget.preview);
+                  // Play without waiting for completion
+                  widget.player.play();
+                  // * Play while waiting for completion
+                  // await widget.player.play();
+                } else {
+                  if (!mounted) return;
+                  ScaffoldMessenger.of(context)
+                    ..removeCurrentSnackBar()
+                    ..showSnackBar(const SnackBar(
+                      content: Text('Sorry! Preview not available'),
+                    ));
+                }
+              }
+              // Preview is playing
+              else if (widget.player.playing == true) {
+                await widget.player.pause();
+              }
+            },
+            child: Stack(
+              children: [
+                // Album Art/Artist Page
+                Ink(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    image: DecorationImage(
+                      image: NetworkImage(
+                        widget.img,
+                      ),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
-              ),
-              // The row at the bottom containing the song track & the share button
-              BottomRow(
-                cardDimension: widget.cardDimension,
-                name: widget.name,
-                preview: widget.preview,
-                url: widget.url,
-                fallbackUrl: widget.fallbackUrl,
-              ),
-            ],
+
+                // The row at the bottom containing the song track & the share button
+                BottomRow(
+                  cardDimension: widget.cardDimension,
+                  name: widget.name,
+                  preview: widget.preview,
+                  url: widget.url,
+                  fallbackUrl: widget.fallbackUrl,
+                ),
+              ],
+            ),
           ),
         ),
       ),
