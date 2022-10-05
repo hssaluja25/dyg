@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 
-import '../../widgets/card.dart';
+import 'card.dart';
 
 List<Widget> createScrollingArea(
     {required bool playPreview,

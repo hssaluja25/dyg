@@ -62,8 +62,8 @@ void authenticate({required BuildContext context}) async {
     final response = await Dio().post(
       'https://accounts.spotify.com/api/token/',
       options: Options(
+        contentType: 'application/x-www-form-urlencoded',
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
           "Authorization": config.authorization,
         },
       ),
