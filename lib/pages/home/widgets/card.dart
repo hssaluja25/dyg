@@ -5,7 +5,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 class CardCreate extends StatefulWidget {
   CardCreate(
-      {required this.width,
+      {required this.songIndex,
+      required this.width,
       required this.name,
       required this.img,
       required this.preview,
@@ -16,6 +17,7 @@ class CardCreate extends StatefulWidget {
       super.key}) {
     cardDimension = (width - 20) / 2;
   }
+  final int songIndex;
   final bool playPreview;
   final double width;
   final String name;
@@ -46,29 +48,68 @@ class _CardCreateState extends State<CardCreate> {
         child: InkWell(
           onTap: widget.playPreview
               ? () async {
-                  // ! If i have clicked on some card while the audio is playing, instead of playing the songs simultaneously the previous song should stop.
-                  // Preview NOT playing
-                  if (widget.player.playing == false) {
-                    if (widget.preview != 'Preview not available') {
-                      // Load a URL
-                      final duration =
-                          await widget.player.setUrl(widget.preview);
-                      // Play without waiting for completion
-                      widget.player.play();
-                      // * Play while waiting for completion
-                      // await widget.player.play();
-                    } else {
-                      if (!mounted) return;
-                      ScaffoldMessenger.of(context)
-                        ..removeCurrentSnackBar()
-                        ..showSnackBar(const SnackBar(
+                  if (widget.preview == 'Preview not available') {
+                    if (!mounted) return;
+                    ScaffoldMessenger.of(context)
+                      ..removeCurrentSnackBar()
+                      ..showSnackBar(
+                        const SnackBar(
                           content: Text('Sorry! Preview not available'),
-                        ));
+                        ),
+                      );
+                  } else {
+                    // If there is no currently playing song, this would be null
+                    final String? currentAudioSource =
+                        widget.player.sequenceState?.currentSource?.tag;
+                    print('Current audio source: $currentAudioSource');
+                    final String thisCard = 'Song ${widget.songIndex + 1}';
+
+                    // Some song is being played
+                    if (widget.player.playing) {
+                      // User tapped on same card and song has already finished playing for the complete duration (Note that this still returns player.playing = true even though no song is currently playing.)
+                      if (currentAudioSource == thisCard &&
+                          widget.player.playbackEvent.processingState ==
+                              ProcessingState.completed) {
+                        widget.player.setAudioSource(
+                          AudioSource.uri(
+                            Uri.parse(widget.preview),
+                            tag: 'Song ${widget.songIndex + 1}',
+                          ),
+                        );
+                        widget.player.play();
+                      } else if (currentAudioSource == thisCard) {
+                        // Song was playing and the user tapped on the same card before it could be finished.
+                        await widget.player.pause();
+                        print('Now the song is paused');
+                      } else {
+                        // User tapped on some other card while the previous song may or may not have finished.
+                        widget.player.setAudioSource(
+                          AudioSource.uri(
+                            Uri.parse(widget.preview),
+                            tag: 'Song ${widget.songIndex + 1}',
+                          ),
+                        );
+                        widget.player.play();
+                      }
                     }
-                  }
-                  // Preview is playing
-                  else if (widget.player.playing == true) {
-                    await widget.player.pause();
+                    // No song is being played
+                    else {
+                      // Paused before completion and user tapped on the same card.
+                      if (currentAudioSource == thisCard) {
+                        widget.player.play();
+                      } else {
+                        print('No song is being played');
+                        print(
+                            'This should be executed initially and when song has finished playing');
+                        widget.player.setAudioSource(
+                          AudioSource.uri(
+                            Uri.parse(widget.preview),
+                            tag: 'Song ${widget.songIndex + 1}',
+                          ),
+                        );
+                        widget.player.play();
+                      }
+                    }
                   }
                 }
               : () {},

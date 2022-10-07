@@ -21,6 +21,7 @@ List<Widget> createScrollingArea(
     for (int card = 0; card < 2; card += 1) {
       childrenOfRow.add(
         CardCreate(
+          songIndex: currentSongOrArtist,
           playPreview: playPreview,
           width: width,
           player: player,
