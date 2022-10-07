@@ -1,6 +1,8 @@
+import 'package:dyg/pages/onboarding/onboarding.dart';
 import 'package:flutter/material.dart';
 import 'package:dyg/services/API/fetch_top_artists.dart';
 import 'package:dyg/services/API/fetch_top_tracks.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:just_audio/just_audio.dart';
 
@@ -59,6 +61,39 @@ class _HomePageState extends State<HomePage> {
                   SvgPicture.asset(
                     'assets/images/home/bg-design.svg',
                     fit: BoxFit.fill,
+                  ),
+                  // Log Out Button
+                  Align(
+                    alignment: const Alignment(0.9, -0.975),
+                    child: TextButton(
+                      onPressed: () async {
+                        print('Logging out');
+                        print('Deleting (encrypted) access and refresh tokens');
+                        const storage = FlutterSecureStorage();
+                        await storage.deleteAll();
+                        if (!mounted) return;
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (BuildContext context) =>
+                                const OnboardingPage(),
+                          ),
+                        );
+                      },
+                      style: TextButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        backgroundColor: const Color(0xFFc2f0f2),
+                        foregroundColor: Colors.black,
+                      ),
+                      child: const Text(
+                        'Log Out',
+                        style: TextStyle(
+                          fontFamily: 'Syne',
+                        ),
+                      ),
+                    ),
                   ),
                   // Top Tracks textbutton
                   Align(
