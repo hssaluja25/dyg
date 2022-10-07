@@ -4,7 +4,7 @@ import 'package:flutter_web_auth/flutter_web_auth.dart';
 import 'package:dio/dio.dart';
 import 'package:pkce/pkce.dart';
 
-import '../../pages/personalization/personalization.dart';
+import '../../pages/home/personalization/personalization.dart';
 import '../encode.dart';
 import '../store.dart';
 // config contains client ID, authorization, which you should create by
@@ -58,7 +58,6 @@ void authenticate({required BuildContext context}) async {
     }
 
     // Use this authentication code to get an access token
-    final Uri uri2 = Uri.parse('https://accounts.spotify.com/api/token/');
     final response = await Dio().post(
       'https://accounts.spotify.com/api/token/',
       options: Options(
@@ -107,7 +106,7 @@ void authenticate({required BuildContext context}) async {
     ScaffoldMessenger.of(context)
       ..removeCurrentSnackBar()
       ..showSnackBar(SnackBar(content: Text(error.message)));
-  } on PlatformException catch (error) {
+  } on PlatformException catch (_) {
     ScaffoldMessenger.of(context)
       ..removeCurrentSnackBar()
       ..showSnackBar(const SnackBar(content: Text('Login cancelled')));

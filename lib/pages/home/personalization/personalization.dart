@@ -134,7 +134,7 @@ class _PersonalizationPageState extends State<PersonalizationPage> {
                   ),
                   // Your Top Tracks/Your Top Artists heading
                   Align(
-                    alignment: const Alignment(-0.7, -0.4),
+                    alignment: const Alignment(-0.7, -0.44),
                     child: Text(
                       showTopTracks ? 'Your Top Tracks' : 'Your Top Artists',
                       style: const TextStyle(
