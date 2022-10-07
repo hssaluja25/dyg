@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:just_audio/just_audio.dart';
@@ -166,20 +167,20 @@ class BottomRow extends StatelessWidget {
         borderRadius: const BorderRadius.vertical(bottom: Radius.circular(20)),
         child: Container(
           height: cardDimension / 3,
-          color: const Color.fromARGB(102, 255, 255, 255),
+          color: Colors.black.withOpacity(0.6),
           padding: const EdgeInsets.only(bottom: 5, left: 5, right: 3),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // The track name or the artist name
-              Flexible(
-                child: Text(
-                  // As long as the artist name or the album track consists of at most 57 characters, everythings is all right.
+              // The track name/Artist name
+              Expanded(
+                child: AutoSizeText(
                   name,
                   style: const TextStyle(
+                    color: Colors.white,
                     fontFamily: 'Syne',
-                    fontSize: 12,
                   ),
+                  maxLines: 3,
                 ),
               ),
               // The share button
@@ -206,6 +207,7 @@ class BottomRow extends StatelessWidget {
                 },
                 icon: const FaIcon(
                   FontAwesomeIcons.share,
+                  color: Colors.white,
                 ),
               ),
             ],
