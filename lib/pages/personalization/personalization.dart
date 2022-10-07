@@ -9,20 +9,21 @@ import 'package:just_audio/just_audio.dart';
 import 'widgets/no_connection.dart';
 import 'widgets/scrolling_area.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage(
+class PersonalizationPage extends StatefulWidget {
+  const PersonalizationPage(
       {required this.accessToken, required this.refreshToken, super.key});
   final String accessToken;
   final String refreshToken;
 
   // I have done this because widget.accessToken and widget.refreshToken are empty. Confirm it.
   @override
-  State<HomePage> createState() =>
-      _HomePageState(accessToken: accessToken, refreshToken: refreshToken);
+  State<PersonalizationPage> createState() => _PersonalizationPageState(
+      accessToken: accessToken, refreshToken: refreshToken);
 }
 
-class _HomePageState extends State<HomePage> {
-  _HomePageState({required this.accessToken, required this.refreshToken});
+class _PersonalizationPageState extends State<PersonalizationPage> {
+  _PersonalizationPageState(
+      {required this.accessToken, required this.refreshToken});
   final String accessToken;
   final String refreshToken;
   // Whether to show top tracks or top artists

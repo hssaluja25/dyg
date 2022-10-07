@@ -4,7 +4,7 @@ import 'package:flutter_web_auth/flutter_web_auth.dart';
 import 'package:dio/dio.dart';
 import 'package:pkce/pkce.dart';
 
-import '../../pages/home/home.dart';
+import '../../pages/personalization/personalization.dart';
 import '../encode.dart';
 import '../store.dart';
 // config contains client ID, authorization, which you should create by
@@ -122,7 +122,7 @@ openHomePage(
     context,
     MaterialPageRoute(
       builder: (BuildContext context) {
-        return HomePage(
+        return PersonalizationPage(
           accessToken: accessToken,
           refreshToken: refreshToken,
         );
