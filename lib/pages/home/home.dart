@@ -2,6 +2,7 @@ import 'package:dyg/pages/home/personalization/personalization.dart';
 import 'package:dyg/pages/home/recommendations/recommendations.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:just_audio/just_audio.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage(
@@ -17,14 +18,22 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   _HomePageState({required String accessToken, required String refreshToken}) {
     screens = [
-      PersonalizationPage(accessToken: accessToken, refreshToken: refreshToken),
-      RecommendationsPage(accessToken: accessToken, refreshToken: refreshToken),
+      PersonalizationPage(
+          accessToken: accessToken, refreshToken: refreshToken, player: player),
+      RecommendationsPage(
+          accessToken: accessToken, refreshToken: refreshToken, player: player),
       const Center(child: Text('3rd Screen')),
     ];
   }
-
   late List<Widget> screens;
   int _currentIndex = 0;
+  final AudioPlayer player = AudioPlayer();
+
+  @override
+  void dispose() {
+    super.dispose();
+    player.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

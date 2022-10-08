@@ -2,24 +2,32 @@ import 'package:dyg/pages/home/recommendations/components/card.dart';
 import 'package:dyg/services/API/fetch_recommendations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:just_audio/just_audio.dart';
 
 import '../components/log_out_button.dart';
 import '../personalization/widgets/no_connection.dart';
 
 class RecommendationsPage extends StatefulWidget {
   const RecommendationsPage(
-      {required this.accessToken, required this.refreshToken, super.key});
+      {required this.accessToken,
+      required this.refreshToken,
+      required this.player,
+      super.key});
   final String accessToken;
   final String refreshToken;
+  final AudioPlayer player;
 
   @override
   State<RecommendationsPage> createState() => _RecommendationsPageState(
-      accessToken: accessToken, refreshToken: refreshToken);
+      accessToken: accessToken, refreshToken: refreshToken, player: player);
 }
 
 class _RecommendationsPageState extends State<RecommendationsPage> {
   _RecommendationsPageState(
-      {required this.accessToken, required this.refreshToken});
+      {required this.accessToken,
+      required this.refreshToken,
+      required this.player});
+  final AudioPlayer player;
   final String accessToken;
   final String refreshToken;
 

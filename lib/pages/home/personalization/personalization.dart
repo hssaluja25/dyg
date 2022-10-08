@@ -10,30 +10,30 @@ import 'widgets/scrolling_area.dart';
 
 class PersonalizationPage extends StatefulWidget {
   const PersonalizationPage(
-      {required this.accessToken, required this.refreshToken, super.key});
+      {required this.accessToken,
+      required this.refreshToken,
+      required this.player,
+      super.key});
+  final AudioPlayer player;
   final String accessToken;
   final String refreshToken;
 
   // I have done this because widget.accessToken and widget.refreshToken are empty. Confirm it.
   @override
   State<PersonalizationPage> createState() => _PersonalizationPageState(
-      accessToken: accessToken, refreshToken: refreshToken);
+      accessToken: accessToken, refreshToken: refreshToken, player: player);
 }
 
 class _PersonalizationPageState extends State<PersonalizationPage> {
   _PersonalizationPageState(
-      {required this.accessToken, required this.refreshToken});
+      {required this.accessToken,
+      required this.refreshToken,
+      required this.player});
+  final AudioPlayer player;
   final String accessToken;
   final String refreshToken;
   // Whether to show top tracks or top artists
   bool showTopTracks = true;
-  final AudioPlayer player = AudioPlayer();
-
-  @override
-  void dispose() {
-    super.dispose();
-    player.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
