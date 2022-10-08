@@ -179,6 +179,7 @@ class BottomRow extends StatelessWidget {
                   style: const TextStyle(
                     color: Colors.white,
                     fontFamily: 'Syne',
+                    fontSize: 18,
                   ),
                   maxLines: 3,
                 ),

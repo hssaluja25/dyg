@@ -18,7 +18,7 @@ class _HomePageState extends State<HomePage> {
   _HomePageState({required String accessToken, required String refreshToken}) {
     screens = [
       PersonalizationPage(accessToken: accessToken, refreshToken: refreshToken),
-      const RecommendationsPage(),
+      RecommendationsPage(accessToken: accessToken, refreshToken: refreshToken),
       const Center(child: Text('3rd Screen')),
     ];
   }
