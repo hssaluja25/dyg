@@ -1,4 +1,5 @@
 import 'package:dyg/pages/home/personalization/personalization.dart';
+import 'package:dyg/pages/home/recommendations/recommendations.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -17,7 +18,7 @@ class _HomePageState extends State<HomePage> {
   _HomePageState({required String accessToken, required String refreshToken}) {
     screens = [
       PersonalizationPage(accessToken: accessToken, refreshToken: refreshToken),
-      const Center(child: Text('2nd Screen')),
+      const RecommendationsPage(),
       const Center(child: Text('3rd Screen')),
     ];
   }
