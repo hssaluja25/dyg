@@ -1,3 +1,4 @@
+import 'package:dyg/pages/home/recommendations/components/card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -13,6 +14,7 @@ class RecommendationsPage extends StatefulWidget {
 class _RecommendationsPageState extends State<RecommendationsPage> {
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
     return Stack(
       children: [
         SvgPicture.asset(
@@ -36,6 +38,32 @@ class _RecommendationsPageState extends State<RecommendationsPage> {
           ),
         ),
         // Horizontal Scrolling Area
+        Align(
+          alignment: const Alignment(-0.7, -0.05),
+          child: SizedBox(
+            height: width / 2,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              cacheExtent: 200,
+              addAutomaticKeepAlives: false,
+              children: const [
+                SizedBox(width: 15),
+                RecommendationCard(),
+                SizedBox(width: 15),
+                RecommendationCard(),
+                SizedBox(width: 15),
+                RecommendationCard(),
+                SizedBox(width: 15),
+                RecommendationCard(),
+                SizedBox(width: 15),
+                RecommendationCard(),
+                SizedBox(width: 15),
+                RecommendationCard(),
+                SizedBox(width: 15),
+              ],
+            ),
+          ),
+        ),
       ],
     );
   }
