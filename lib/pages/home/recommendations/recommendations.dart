@@ -1,5 +1,6 @@
 import 'package:dyg/pages/home/recommendations/components/horizontal_scrolling_area.dart';
 import 'package:dyg/services/API/fetch_recommendations.dart';
+import 'package:dyg/services/API/recommend_genre.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:just_audio/just_audio.dart';
@@ -70,6 +71,59 @@ class _RecommendationsPageState extends State<RecommendationsPage> {
               print("Recommendations: $recommendations");
               return Align(
                 alignment: const Alignment(-0.7, -0.05),
+                child: SizedBox(
+                  height: width / 2,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    cacheExtent: 200,
+                    addAutomaticKeepAlives: false,
+                    children: addChildren(
+                        recommendations: recommendations, player: player),
+                  ),
+                ),
+              );
+            } else if (snapshot.hasError) {
+              print('There was an error executing the future');
+              print(snapshot.error);
+              return const NoConnection();
+            } else {
+              // Loading...
+              print('State is:');
+              print(snapshot.connectionState);
+              return Container(
+                color: const Color(0xFFE9EFFF),
+                alignment: Alignment.center,
+                child: const CircularProgressIndicator(),
+              );
+            }
+          },
+        ),
+        // Acoustic songs for you
+        const Align(
+          alignment: Alignment(-0.7, 0.33),
+          child: Text(
+            'Acoustic songs for you',
+            style: TextStyle(
+              fontFamily: 'SyneBold',
+              fontSize: 22,
+            ),
+          ),
+        ),
+        // Horizontal Scrolling Area
+        FutureBuilder(
+          future: fetchGenre(
+            accessToken: accessToken,
+            refreshToken: refreshToken,
+            genre: 'acoustic',
+          ),
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            if (snapshot.connectionState == ConnectionState.done &&
+                snapshot.hasData) {
+              print('Acoustic Song Future Completed');
+              List recommendations = snapshot.data;
+              print("Recommendations: $recommendations");
+              return Align(
+                alignment: const Alignment(-0.7, 0.78),
                 child: SizedBox(
                   height: width / 2,
                   child: ListView(

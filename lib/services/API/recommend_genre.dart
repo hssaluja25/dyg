@@ -1,17 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
-import 'package:dyg/services/API/reqest_new_access_token.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'reqest_new_access_token.dart';
 
-Future fetchRecommendations({
+Future fetchGenre({
+  required String genre,
   required String accessToken,
   required String refreshToken,
 }) async {
-  print("Finding recommendations future of FutureBuilder is being executed");
-
-  const storage = FlutterSecureStorage();
-  String top5TracksIds = await storage.read(key: 'ids') ?? '';
-
   DioCacheManager dcm = DioCacheManager(CacheConfig());
   Options cacheOptions = buildCacheOptions(
     const Duration(hours: 1),
@@ -25,17 +20,14 @@ Future fetchRecommendations({
   Dio dio = Dio();
   dio.interceptors.add(dcm.interceptor);
   final response = await dio.get(
-    'https://api.spotify.com/v1/recommendations?seed_tracks=$top5TracksIds',
+    'https://api.spotify.com/v1/recommendations?seed_genres=$genre',
     options: cacheOptions,
   );
   print(response.data);
   print(response.statusCode);
-  print('\n\n');
   if (response.statusCode == 200) {
     final map = Map<String, dynamic>.from(response.data);
-
     int total = map['tracks'].length;
-
     List<Map<String, String>> recommendations = [];
     for (int i = 0; i < total; i++) {
       // Stores track name, artist name, album art, share link and preview link
@@ -68,9 +60,10 @@ Future fetchRecommendations({
         await requestRefreshedAccessToken(refreshToken: refreshToken);
 
     // Recursively call this function again
-    return await fetchRecommendations(
+    return await fetchGenre(
       accessToken: newAccessToken,
       refreshToken: refreshToken,
+      genre: genre,
     );
   }
 }
