@@ -1,4 +1,4 @@
-import 'package:dyg/pages/home/recommendations/components/card.dart';
+import 'package:dyg/pages/home/recommendations/components/horizontal_scrolling_area.dart';
 import 'package:dyg/services/API/fetch_recommendations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -76,21 +76,8 @@ class _RecommendationsPageState extends State<RecommendationsPage> {
                     scrollDirection: Axis.horizontal,
                     cacheExtent: 200,
                     addAutomaticKeepAlives: false,
-                    children: const [
-                      SizedBox(width: 15),
-                      RecommendationCard(),
-                      SizedBox(width: 15),
-                      RecommendationCard(),
-                      SizedBox(width: 15),
-                      RecommendationCard(),
-                      SizedBox(width: 15),
-                      RecommendationCard(),
-                      SizedBox(width: 15),
-                      RecommendationCard(),
-                      SizedBox(width: 15),
-                      RecommendationCard(),
-                      SizedBox(width: 15),
-                    ],
+                    children: addChildren(
+                        recommendations: recommendations, player: player),
                   ),
                 ),
               );

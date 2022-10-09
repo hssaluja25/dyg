@@ -1,12 +1,37 @@
+import 'package:dyg/pages/home/components/share_button.dart';
+import 'package:dyg/services/play_preview.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:just_audio/just_audio.dart';
 
-class RecommendationCard extends StatelessWidget {
-  const RecommendationCard({super.key});
+class RecommendationCard extends StatefulWidget {
+  const RecommendationCard(
+      {required this.songIndex,
+      required this.name,
+      required this.artist,
+      required this.albumArt,
+      required this.preview,
+      required this.url,
+      required this.fallbackUrl,
+      required this.player,
+      super.key});
+  final int songIndex;
+  final String name;
+  final String artist;
+  final String albumArt;
+  final String preview;
+  final String url;
+  final String fallbackUrl;
+  final AudioPlayer player;
 
   @override
+  State<RecommendationCard> createState() => _RecommendationCardState();
+}
+
+class _RecommendationCardState extends State<RecommendationCard> {
+  @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
+    final double width = MediaQuery.of(context).size.width;
+    final double height = MediaQuery.of(context).size.height;
     return SizedBox(
       width: width / 2 + 30,
       height: width / 2,
@@ -16,36 +41,46 @@ class RecommendationCard extends StatelessWidget {
         ),
         elevation: 3,
         child: InkWell(
-          onTap: () {},
+          onTap: () async {
+            await playPreview(
+                preview: widget.preview,
+                context: context,
+                player: widget.player,
+                songIndex: widget.songIndex);
+          },
+          borderRadius: BorderRadius.circular(40),
           child: Stack(
             children: [
               // Album Art
               Ink(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(40),
-                  image: const DecorationImage(
+                  image: DecorationImage(
                     image: NetworkImage(
-                      'https://www.scdn.co/i/_global/open-graph-default.png',
+                      widget.albumArt,
                     ),
                     fit: BoxFit.cover,
                   ),
                 ),
               ),
-              // Track and Artist Name
+              // Track and Artist name
               Positioned(
-                top: 10,
-                left: 10,
-                right: 10,
+                top: 14,
+                left: 14,
+                right: 14,
                 child: Column(
                   children: [
                     // Track Name
                     Row(
-                      children: const [
+                      children: [
                         Flexible(
                           child: Text(
-                            'Track Name ewfhuowhuoewrhuogrgrhurfwuoweuoweuoweuoewf',
+                            widget.name,
                             style: TextStyle(
-                              fontSize: 25,
+                              backgroundColor: Colors.black.withOpacity(0.6),
+                              color: Colors.white,
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
@@ -53,12 +88,15 @@ class RecommendationCard extends StatelessWidget {
                     ),
                     // Artist Name
                     Row(
-                      children: const [
+                      children: [
                         Flexible(
                           child: Text(
-                            'Artist Name ewruigrhuorewf',
+                            widget.artist,
                             style: TextStyle(
-                              fontSize: 15,
+                              backgroundColor: Colors.black.withOpacity(0.6),
+                              fontSize: 14,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
@@ -71,13 +109,8 @@ class RecommendationCard extends StatelessWidget {
               Positioned(
                 bottom: 10,
                 right: 10,
-                child: IconButton(
-                  onPressed: () {},
-                  icon: const FaIcon(
-                    FontAwesomeIcons.share,
-                    color: Colors.white,
-                  ),
-                ),
+                child: ShareButton(
+                    url: widget.url, fallbackUrl: widget.fallbackUrl),
               ),
             ],
           ),
