@@ -116,6 +116,7 @@ class _PersonalizationPageState extends State<PersonalizationPage> {
                   width: width,
                   height: 500,
                   child: ListView(
+                    physics: const BouncingScrollPhysics(),
                     cacheExtent: 200,
                     addAutomaticKeepAlives: false,
                     children: createScrollingArea(
