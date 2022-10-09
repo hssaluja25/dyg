@@ -65,7 +65,7 @@ class _RecommendationsPageState extends State<RecommendationsPage> {
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.connectionState == ConnectionState.done &&
                 snapshot.hasData) {
-              print('Future Completed');
+              print('Fetch Recommendations Future Completed');
               List recommendations = snapshot.data;
               print("Recommendations: $recommendations");
               return Align(

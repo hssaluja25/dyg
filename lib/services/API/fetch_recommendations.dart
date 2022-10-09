@@ -1,12 +1,17 @@
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:dyg/services/API/reqest_new_access_token.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 Future fetchRecommendations({
   required String accessToken,
   required String refreshToken,
 }) async {
   print("Finding recommendations future of FutureBuilder is being executed");
+
+  const storage = FlutterSecureStorage();
+  String top5TracksIds = await storage.read(key: 'ids') ?? '';
+
   DioCacheManager dcm = DioCacheManager(CacheConfig());
   Options cacheOptions = buildCacheOptions(
     const Duration(hours: 1),
@@ -20,7 +25,7 @@ Future fetchRecommendations({
   Dio dio = Dio();
   dio.interceptors.add(dcm.interceptor);
   final response = await dio.get(
-    'https://api.spotify.com/v1/recommendations?seed_tracks=5CZ40GBx1sQ9agT82CLQCT%2C7eJMfftS33KTjuF7lTsMCx%2C5wANPM4fQCJwkGd4rN57mH%2C6HU7h9RYOaPRFeh0R3UeAr%2C3nqqDo8CcCLke3ZoTgiOKf',
+    'https://api.spotify.com/v1/recommendations?seed_tracks=${top5TracksIds}',
     options: cacheOptions,
   );
   print(response.data);

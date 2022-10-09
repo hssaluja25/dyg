@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:dyg/services/API/reqest_new_access_token.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 /// Fetches short term top tracks
 /// Returns a list of maps with info about user's top tracks
@@ -35,9 +36,18 @@ Future findTopTracks({
 
     // Stores info for all top tracks
     List<Map<String, String>> topTracks = [];
+
+    // Stores id of user's top 5 tracks. Later used by recommendations page to recommend songs similar to them.
+    List<String> ids = [];
     for (int i = 0; i < total; i++) {
       // Stores track name, album art, share link and preview link.
       Map<String, String> trackInfo = {};
+
+      // If this is one of the user's top 5 tracks, then store its id
+      if (i < 5) {
+        ids.add(map['items'][i]['id']);
+      }
+
       // Add track name
       trackInfo["name"] = map["items"][i]['name'];
       // 300x300 album art
@@ -55,6 +65,12 @@ Future findTopTracks({
 
       topTracks.add(trackInfo);
     }
+
+    // Store the ids of user's top 5 songs so that they can be later read by recommendations page.
+    // This could have been done better using a proper State Management helper.
+    const storage = FlutterSecureStorage();
+    await storage.write(key: 'ids', value: ids.join('%2C'));
+
     bool odd = total % 2 == 0 ? false : true;
     // We don't want odd number of top tracks
     if (odd) {
