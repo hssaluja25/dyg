@@ -6,7 +6,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:just_audio/just_audio.dart';
 
 import '../components/log_out_button.dart';
-import '../personalization/widgets/no_connection.dart';
 
 class RecommendationsPage extends StatefulWidget {
   const RecommendationsPage(
@@ -112,9 +111,18 @@ class _RecommendationsPageState extends State<RecommendationsPage> {
                         ),
                       );
                     } else if (snapshot.hasError) {
-                      print('There was an error executing the future');
                       print(snapshot.error);
-                      return const NoConnection();
+                      return Container(
+                        margin: const EdgeInsets.only(left: 15),
+                        child: const Text(
+                          'Oops! The server cannot currently process this request. Please try again after some time.',
+                          style: TextStyle(
+                            fontFamily: 'SyneBold',
+                            fontSize: 16,
+                            color: Colors.redAccent,
+                          ),
+                        ),
+                      );
                     } else {
                       // Loading...
                       print(snapshot.connectionState);
@@ -165,9 +173,18 @@ class _RecommendationsPageState extends State<RecommendationsPage> {
                         ),
                       );
                     } else if (snapshot.hasError) {
-                      print('There was an error executing the future');
                       print(snapshot.error);
-                      return const NoConnection();
+                      return Container(
+                        margin: const EdgeInsets.only(left: 15),
+                        child: const Text(
+                          'Oops! The server cannot currently process this request. Please try again after some time.',
+                          style: TextStyle(
+                            fontFamily: 'SyneBold',
+                            fontSize: 16,
+                            color: Colors.redAccent,
+                          ),
+                        ),
+                      );
                     } else {
                       print(snapshot.connectionState);
                       // Loading...

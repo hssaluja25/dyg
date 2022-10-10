@@ -72,5 +72,8 @@ Future fetchRecommendations({
       accessToken: newAccessToken,
       refreshToken: refreshToken,
     );
+  } else {
+    print('Error fetching Recommendations for You');
+    throw Exception('Error fetching recommendations');
   }
 }

@@ -68,5 +68,8 @@ Future fetchGenre({
       refreshToken: refreshToken,
       genre: genre,
     );
+  } else {
+    print('Error fetching $genre recommendations');
+    throw Exception('Error fetching recommendations');
   }
 }

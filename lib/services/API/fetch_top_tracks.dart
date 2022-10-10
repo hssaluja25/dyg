@@ -89,5 +89,8 @@ Future findTopTracks({
       accessToken: newAccessToken,
       refreshToken: refreshToken,
     );
+  } else {
+    print('Error fetching top tracks');
+    throw Exception('Error fetching top tracks');
   }
 }

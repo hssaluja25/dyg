@@ -5,7 +5,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:just_audio/just_audio.dart';
 
 import '../components/log_out_button.dart';
-import 'widgets/no_connection.dart';
 import 'widgets/scrolling_area.dart';
 
 class PersonalizationPage extends StatefulWidget {
@@ -48,11 +47,9 @@ class _PersonalizationPageState extends State<PersonalizationPage> {
         // access tokens
         if (snapshot.connectionState == ConnectionState.done &&
             snapshot.hasData) {
-          print('Inside ConnectionState.done');
           // This list would contain either user's top tracks or top artists
           // depending on what the user wants
           List usersTopList = snapshot.data;
-          print("User's top list is $usersTopList");
           return Stack(
             children: [
               SvgPicture.asset(
@@ -131,9 +128,16 @@ class _PersonalizationPageState extends State<PersonalizationPage> {
             ],
           );
         } else if (snapshot.hasError) {
-          print('There was an error executing the future');
+          print('There was an error fetching top items');
           print(snapshot.error);
-          return const NoConnection();
+          return Container(
+            alignment: Alignment.topCenter,
+            color: const Color(0xFFeff1f3),
+            child: Image.asset(
+              'assets/images/personalization/error.png',
+              fit: BoxFit.cover,
+            ),
+          );
         } else {
           // Loading...
           print('State is:');

@@ -37,6 +37,7 @@ flutter:
     - assets/images/login/button.svg
 
     - assets/images/personalization/bg-design.svg
+    - assets/images/personalization/error.png
     - assets/images/personalization/trial.png
 
     - assets/images/recommendations/bg-design.svg
