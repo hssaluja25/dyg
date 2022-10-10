@@ -23,8 +23,11 @@ Future fetchGenre({
     'https://api.spotify.com/v1/recommendations?seed_genres=$genre',
     options: cacheOptions,
   );
-  print(response.data);
-  print(response.statusCode);
+  if (response.statusCode != 200) {
+    print(response.statusCode);
+    print(response.data);
+  }
+
   if (response.statusCode == 200) {
     final map = Map<String, dynamic>.from(response.data);
     int total = map['tracks'].length;

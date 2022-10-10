@@ -31,9 +31,26 @@ class _RecommendationsPageState extends State<RecommendationsPage> {
   final AudioPlayer player;
   final String accessToken;
   final String refreshToken;
+  // Used by ListView.builder
+  List<String> listOfRecommendations = [
+    'Recommended',
+    'acoustic',
+    'edm',
+    'happy',
+    'indian',
+    'jazz',
+    'k-pop',
+    'metal',
+    'pop',
+    'rock',
+    'romance',
+    'sad',
+    'work-out',
+  ];
 
   @override
   Widget build(BuildContext context) {
+    print('\n\n\n\n Opened Recommendations Page \n\n\n\n');
     double width = MediaQuery.of(context).size.width;
     return Stack(
       children: [
@@ -53,675 +70,127 @@ class _RecommendationsPageState extends State<RecommendationsPage> {
           bottom: 0,
           left: 0,
           right: 0,
-          child: ListView(
+          child: ListView.builder(
             physics: const BouncingScrollPhysics(),
             addAutomaticKeepAlives: false,
             cacheExtent: 100,
-            children: [
-              // Recommended for you text
-              Container(
-                margin: const EdgeInsets.only(left: 15, bottom: 5, top: 20),
-                child: const Text(
-                  'Recommended for you',
-                  style: TextStyle(
-                    fontFamily: 'SyneBold',
-                    fontSize: 22,
+            itemCount: 13,
+            itemBuilder: (BuildContext context, int index) {
+              Container headingText;
+              FutureBuilder scrollingArea;
+              if (index == 0) {
+                headingText = Container(
+                  margin: const EdgeInsets.only(left: 15, bottom: 5, top: 20),
+                  child: const Text(
+                    'Recommended for you',
+                    style: TextStyle(
+                      fontFamily: 'SyneBold',
+                      fontSize: 22,
+                    ),
                   ),
-                ),
-              ),
-              // Horizontal Scrolling Area
-              FutureBuilder(
-                future: fetchRecommendations(
-                  accessToken: accessToken,
-                  refreshToken: refreshToken,
-                ),
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done &&
-                      snapshot.hasData) {
-                    print('Fetch Recommendations Future Completed');
-                    List recommendations = snapshot.data;
-                    print("Recommendations: $recommendations");
-                    return SizedBox(
-                      height: width / 2,
-                      child: ListView(
-                        physics: const BouncingScrollPhysics(),
-                        scrollDirection: Axis.horizontal,
-                        cacheExtent: 200,
-                        addAutomaticKeepAlives: false,
-                        children: addChildren(
-                            recommendations: recommendations, player: player),
-                      ),
-                    );
-                  } else if (snapshot.hasError) {
-                    print('There was an error executing the future');
-                    print(snapshot.error);
-                    return const NoConnection();
-                  } else {
-                    // Loading...
-                    print('State is:');
-                    print(snapshot.connectionState);
-                    return Container(
-                      color: const Color(0xFFE9EFFF),
-                      alignment: Alignment.center,
-                      child: const CircularProgressIndicator(),
-                    );
-                  }
-                },
-              ),
-              // Acoustic songs for you
-              Container(
-                margin: const EdgeInsets.only(left: 15, bottom: 5, top: 20),
-                child: const Text(
-                  'Acoustic songs for you',
-                  style: TextStyle(
-                    fontFamily: 'SyneBold',
-                    fontSize: 22,
+                );
+                // Horizontal Scrolling Area
+                scrollingArea = FutureBuilder(
+                  future: fetchRecommendations(
+                    accessToken: accessToken,
+                    refreshToken: refreshToken,
                   ),
-                ),
-              ),
-              // Horizontal Scrolling Area
-              FutureBuilder(
-                future: fetchGenre(
-                  accessToken: accessToken,
-                  refreshToken: refreshToken,
-                  genre: 'acoustic',
-                ),
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done &&
-                      snapshot.hasData) {
-                    print('Acoustic Song Future Completed');
-                    List recommendations = snapshot.data;
-                    print("Recommendations: $recommendations");
-                    return SizedBox(
-                      height: width / 2,
-                      child: ListView(
-                        physics: const BouncingScrollPhysics(),
-                        scrollDirection: Axis.horizontal,
-                        cacheExtent: 200,
-                        addAutomaticKeepAlives: false,
-                        children: addChildren(
-                            recommendations: recommendations, player: player),
-                      ),
-                    );
-                  } else if (snapshot.hasError) {
-                    print('There was an error executing the future');
-                    print(snapshot.error);
-                    return const NoConnection();
-                  } else {
-                    // Loading...
-                    print('State is:');
-                    print(snapshot.connectionState);
-                    return Container(
-                      color: const Color(0xFFE9EFFF),
-                      alignment: Alignment.center,
-                      child: const CircularProgressIndicator(),
-                    );
-                  }
-                },
-              ),
-              // Edm songs for you
-              Container(
-                margin: const EdgeInsets.only(left: 15, bottom: 5, top: 20),
-                child: const Text(
-                  'Edm songs for you',
-                  style: TextStyle(
-                    fontFamily: 'SyneBold',
-                    fontSize: 22,
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done &&
+                        snapshot.hasData) {
+                      print('Fetch Recommendations Future Completed');
+                      List recommendations = snapshot.data;
+                      return SizedBox(
+                        height: width / 2,
+                        child: ListView(
+                          physics: const BouncingScrollPhysics(),
+                          scrollDirection: Axis.horizontal,
+                          cacheExtent: 200,
+                          addAutomaticKeepAlives: false,
+                          children: addChildren(
+                              recommendations: recommendations, player: player),
+                        ),
+                      );
+                    } else if (snapshot.hasError) {
+                      print('There was an error executing the future');
+                      print(snapshot.error);
+                      return const NoConnection();
+                    } else {
+                      // Loading...
+                      print(snapshot.connectionState);
+                      return Container(
+                        color: const Color(0xFFE9EFFF),
+                        alignment: Alignment.center,
+                        child: const CircularProgressIndicator(),
+                      );
+                    }
+                  },
+                );
+              } else {
+                String genre = listOfRecommendations[index];
+                String capitalizedGenre =
+                    genre[0].toUpperCase() + genre.substring(1);
+                headingText = Container(
+                  margin: const EdgeInsets.only(left: 15, bottom: 5, top: 20),
+                  child: Text(
+                    '$capitalizedGenre songs for you',
+                    style: const TextStyle(
+                      fontFamily: 'SyneBold',
+                      fontSize: 22,
+                    ),
                   ),
-                ),
-              ),
-              // Horizontal Scrolling Area
-              FutureBuilder(
-                future: fetchGenre(
-                  accessToken: accessToken,
-                  refreshToken: refreshToken,
-                  genre: 'edm',
-                ),
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done &&
-                      snapshot.hasData) {
-                    print('Acoustic Song Future Completed');
-                    List recommendations = snapshot.data;
-                    print("Recommendations: $recommendations");
-                    return SizedBox(
-                      height: width / 2,
-                      child: ListView(
-                        physics: const BouncingScrollPhysics(),
-                        scrollDirection: Axis.horizontal,
-                        cacheExtent: 200,
-                        addAutomaticKeepAlives: false,
-                        children: addChildren(
-                            recommendations: recommendations, player: player),
-                      ),
-                    );
-                  } else if (snapshot.hasError) {
-                    print('There was an error executing the future');
-                    print(snapshot.error);
-                    return const NoConnection();
-                  } else {
-                    // Loading...
-                    print('State is:');
-                    print(snapshot.connectionState);
-                    return Container(
-                      color: const Color(0xFFE9EFFF),
-                      alignment: Alignment.center,
-                      child: const CircularProgressIndicator(),
-                    );
-                  }
-                },
-              ),
-              // Happy songs for you
-              Container(
-                margin: const EdgeInsets.only(left: 15, bottom: 5, top: 20),
-                child: const Text(
-                  'Happy songs for you',
-                  style: TextStyle(
-                    fontFamily: 'SyneBold',
-                    fontSize: 22,
+                );
+
+                // Horizontal Scrolling Area
+                scrollingArea = FutureBuilder(
+                  future: fetchGenre(
+                    accessToken: accessToken,
+                    refreshToken: refreshToken,
+                    genre: genre,
                   ),
-                ),
-              ),
-              // Horizontal Scrolling Area
-              FutureBuilder(
-                future: fetchGenre(
-                  accessToken: accessToken,
-                  refreshToken: refreshToken,
-                  genre: 'happy',
-                ),
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done &&
-                      snapshot.hasData) {
-                    print('Acoustic Song Future Completed');
-                    List recommendations = snapshot.data;
-                    print("Recommendations: $recommendations");
-                    return SizedBox(
-                      height: width / 2,
-                      child: ListView(
-                        physics: const BouncingScrollPhysics(),
-                        scrollDirection: Axis.horizontal,
-                        cacheExtent: 200,
-                        addAutomaticKeepAlives: false,
-                        children: addChildren(
-                            recommendations: recommendations, player: player),
-                      ),
-                    );
-                  } else if (snapshot.hasError) {
-                    print('There was an error executing the future');
-                    print(snapshot.error);
-                    return const NoConnection();
-                  } else {
-                    // Loading...
-                    print('State is:');
-                    print(snapshot.connectionState);
-                    return Container(
-                      color: const Color(0xFFE9EFFF),
-                      alignment: Alignment.center,
-                      child: const CircularProgressIndicator(),
-                    );
-                  }
-                },
-              ),
-              // Indian songs for you
-              Container(
-                margin: const EdgeInsets.only(left: 15, bottom: 5, top: 20),
-                child: const Text(
-                  'Indian songs for you',
-                  style: TextStyle(
-                    fontFamily: 'SyneBold',
-                    fontSize: 22,
-                  ),
-                ),
-              ),
-              // Horizontal Scrolling Area
-              FutureBuilder(
-                future: fetchGenre(
-                  accessToken: accessToken,
-                  refreshToken: refreshToken,
-                  genre: 'indian',
-                ),
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done &&
-                      snapshot.hasData) {
-                    print('Acoustic Song Future Completed');
-                    List recommendations = snapshot.data;
-                    print("Recommendations: $recommendations");
-                    return SizedBox(
-                      height: width / 2,
-                      child: ListView(
-                        physics: const BouncingScrollPhysics(),
-                        scrollDirection: Axis.horizontal,
-                        cacheExtent: 200,
-                        addAutomaticKeepAlives: false,
-                        children: addChildren(
-                            recommendations: recommendations, player: player),
-                      ),
-                    );
-                  } else if (snapshot.hasError) {
-                    print('There was an error executing the future');
-                    print(snapshot.error);
-                    return const NoConnection();
-                  } else {
-                    // Loading...
-                    print('State is:');
-                    print(snapshot.connectionState);
-                    return Container(
-                      color: const Color(0xFFE9EFFF),
-                      alignment: Alignment.center,
-                      child: const CircularProgressIndicator(),
-                    );
-                  }
-                },
-              ),
-              // Jazz songs for you
-              Container(
-                margin: const EdgeInsets.only(left: 15, bottom: 5, top: 20),
-                child: const Text(
-                  'Jazz songs for you',
-                  style: TextStyle(
-                    fontFamily: 'SyneBold',
-                    fontSize: 22,
-                  ),
-                ),
-              ),
-              // Horizontal Scrolling Area
-              FutureBuilder(
-                future: fetchGenre(
-                  accessToken: accessToken,
-                  refreshToken: refreshToken,
-                  genre: 'jazz',
-                ),
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done &&
-                      snapshot.hasData) {
-                    print('Acoustic Song Future Completed');
-                    List recommendations = snapshot.data;
-                    print("Recommendations: $recommendations");
-                    return SizedBox(
-                      height: width / 2,
-                      child: ListView(
-                        physics: const BouncingScrollPhysics(),
-                        scrollDirection: Axis.horizontal,
-                        cacheExtent: 200,
-                        addAutomaticKeepAlives: false,
-                        children: addChildren(
-                            recommendations: recommendations, player: player),
-                      ),
-                    );
-                  } else if (snapshot.hasError) {
-                    print('There was an error executing the future');
-                    print(snapshot.error);
-                    return const NoConnection();
-                  } else {
-                    // Loading...
-                    print('State is:');
-                    print(snapshot.connectionState);
-                    return Container(
-                      color: const Color(0xFFE9EFFF),
-                      alignment: Alignment.center,
-                      child: const CircularProgressIndicator(),
-                    );
-                  }
-                },
-              ),
-              // K-Pop songs for you
-              Container(
-                margin: const EdgeInsets.only(left: 15, bottom: 5, top: 20),
-                child: const Text(
-                  'K-Pop songs for you',
-                  style: TextStyle(
-                    fontFamily: 'SyneBold',
-                    fontSize: 22,
-                  ),
-                ),
-              ),
-              // Horizontal Scrolling Area
-              FutureBuilder(
-                future: fetchGenre(
-                  accessToken: accessToken,
-                  refreshToken: refreshToken,
-                  genre: 'k-pop',
-                ),
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done &&
-                      snapshot.hasData) {
-                    print('Acoustic Song Future Completed');
-                    List recommendations = snapshot.data;
-                    print("Recommendations: $recommendations");
-                    return SizedBox(
-                      height: width / 2,
-                      child: ListView(
-                        physics: const BouncingScrollPhysics(),
-                        scrollDirection: Axis.horizontal,
-                        cacheExtent: 200,
-                        addAutomaticKeepAlives: false,
-                        children: addChildren(
-                            recommendations: recommendations, player: player),
-                      ),
-                    );
-                  } else if (snapshot.hasError) {
-                    print('There was an error executing the future');
-                    print(snapshot.error);
-                    return const NoConnection();
-                  } else {
-                    // Loading...
-                    print('State is:');
-                    print(snapshot.connectionState);
-                    return Container(
-                      color: const Color(0xFFE9EFFF),
-                      alignment: Alignment.center,
-                      child: const CircularProgressIndicator(),
-                    );
-                  }
-                },
-              ),
-              // Metal songs for you
-              Container(
-                margin: const EdgeInsets.only(left: 15, bottom: 5, top: 20),
-                child: const Text(
-                  'Metal songs for you',
-                  style: TextStyle(
-                    fontFamily: 'SyneBold',
-                    fontSize: 22,
-                  ),
-                ),
-              ),
-              // Horizontal Scrolling Area
-              FutureBuilder(
-                future: fetchGenre(
-                  accessToken: accessToken,
-                  refreshToken: refreshToken,
-                  genre: 'metal',
-                ),
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done &&
-                      snapshot.hasData) {
-                    print('Acoustic Song Future Completed');
-                    List recommendations = snapshot.data;
-                    print("Recommendations: $recommendations");
-                    return SizedBox(
-                      height: width / 2,
-                      child: ListView(
-                        physics: const BouncingScrollPhysics(),
-                        scrollDirection: Axis.horizontal,
-                        cacheExtent: 200,
-                        addAutomaticKeepAlives: false,
-                        children: addChildren(
-                            recommendations: recommendations, player: player),
-                      ),
-                    );
-                  } else if (snapshot.hasError) {
-                    print('There was an error executing the future');
-                    print(snapshot.error);
-                    return const NoConnection();
-                  } else {
-                    // Loading...
-                    print('State is:');
-                    print(snapshot.connectionState);
-                    return Container(
-                      color: const Color(0xFFE9EFFF),
-                      alignment: Alignment.center,
-                      child: const CircularProgressIndicator(),
-                    );
-                  }
-                },
-              ),
-              // Pop songs for you
-              Container(
-                margin: const EdgeInsets.only(left: 15, bottom: 5, top: 20),
-                child: const Text(
-                  'Pop songs for you',
-                  style: TextStyle(
-                    fontFamily: 'SyneBold',
-                    fontSize: 22,
-                  ),
-                ),
-              ),
-              // Horizontal Scrolling Area
-              FutureBuilder(
-                future: fetchGenre(
-                  accessToken: accessToken,
-                  refreshToken: refreshToken,
-                  genre: 'pop',
-                ),
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done &&
-                      snapshot.hasData) {
-                    print('Acoustic Song Future Completed');
-                    List recommendations = snapshot.data;
-                    print("Recommendations: $recommendations");
-                    return SizedBox(
-                      height: width / 2,
-                      child: ListView(
-                        physics: const BouncingScrollPhysics(),
-                        scrollDirection: Axis.horizontal,
-                        cacheExtent: 200,
-                        addAutomaticKeepAlives: false,
-                        children: addChildren(
-                            recommendations: recommendations, player: player),
-                      ),
-                    );
-                  } else if (snapshot.hasError) {
-                    print('There was an error executing the future');
-                    print(snapshot.error);
-                    return const NoConnection();
-                  } else {
-                    // Loading...
-                    print('State is:');
-                    print(snapshot.connectionState);
-                    return Container(
-                      color: const Color(0xFFE9EFFF),
-                      alignment: Alignment.center,
-                      child: const CircularProgressIndicator(),
-                    );
-                  }
-                },
-              ),
-              // Rock songs for you
-              Container(
-                margin: const EdgeInsets.only(left: 15, bottom: 5, top: 20),
-                child: const Text(
-                  'Rock songs for you',
-                  style: TextStyle(
-                    fontFamily: 'SyneBold',
-                    fontSize: 22,
-                  ),
-                ),
-              ),
-              // Horizontal Scrolling Area
-              FutureBuilder(
-                future: fetchGenre(
-                  accessToken: accessToken,
-                  refreshToken: refreshToken,
-                  genre: 'rock',
-                ),
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done &&
-                      snapshot.hasData) {
-                    print('Acoustic Song Future Completed');
-                    List recommendations = snapshot.data;
-                    print("Recommendations: $recommendations");
-                    return SizedBox(
-                      height: width / 2,
-                      child: ListView(
-                        physics: const BouncingScrollPhysics(),
-                        scrollDirection: Axis.horizontal,
-                        cacheExtent: 200,
-                        addAutomaticKeepAlives: false,
-                        children: addChildren(
-                            recommendations: recommendations, player: player),
-                      ),
-                    );
-                  } else if (snapshot.hasError) {
-                    print('There was an error executing the future');
-                    print(snapshot.error);
-                    return const NoConnection();
-                  } else {
-                    // Loading...
-                    print('State is:');
-                    print(snapshot.connectionState);
-                    return Container(
-                      color: const Color(0xFFE9EFFF),
-                      alignment: Alignment.center,
-                      child: const CircularProgressIndicator(),
-                    );
-                  }
-                },
-              ),
-              // Romance songs for you
-              Container(
-                margin: const EdgeInsets.only(left: 15, bottom: 5, top: 20),
-                child: const Text(
-                  'Romance songs for you',
-                  style: TextStyle(
-                    fontFamily: 'SyneBold',
-                    fontSize: 22,
-                  ),
-                ),
-              ),
-              // Horizontal Scrolling Area
-              FutureBuilder(
-                future: fetchGenre(
-                  accessToken: accessToken,
-                  refreshToken: refreshToken,
-                  genre: 'romance',
-                ),
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done &&
-                      snapshot.hasData) {
-                    print('Acoustic Song Future Completed');
-                    List recommendations = snapshot.data;
-                    print("Recommendations: $recommendations");
-                    return SizedBox(
-                      height: width / 2,
-                      child: ListView(
-                        physics: const BouncingScrollPhysics(),
-                        scrollDirection: Axis.horizontal,
-                        cacheExtent: 200,
-                        addAutomaticKeepAlives: false,
-                        children: addChildren(
-                            recommendations: recommendations, player: player),
-                      ),
-                    );
-                  } else if (snapshot.hasError) {
-                    print('There was an error executing the future');
-                    print(snapshot.error);
-                    return const NoConnection();
-                  } else {
-                    // Loading...
-                    print('State is:');
-                    print(snapshot.connectionState);
-                    return Container(
-                      color: const Color(0xFFE9EFFF),
-                      alignment: Alignment.center,
-                      child: const CircularProgressIndicator(),
-                    );
-                  }
-                },
-              ),
-              // Sad songs for you
-              Container(
-                margin: const EdgeInsets.only(left: 15, bottom: 5, top: 20),
-                child: const Text(
-                  'Sad songs for you',
-                  style: TextStyle(
-                    fontFamily: 'SyneBold',
-                    fontSize: 22,
-                  ),
-                ),
-              ),
-              // Horizontal Scrolling Area
-              FutureBuilder(
-                future: fetchGenre(
-                  accessToken: accessToken,
-                  refreshToken: refreshToken,
-                  genre: 'sad',
-                ),
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done &&
-                      snapshot.hasData) {
-                    print('Acoustic Song Future Completed');
-                    List recommendations = snapshot.data;
-                    print("Recommendations: $recommendations");
-                    return SizedBox(
-                      height: width / 2,
-                      child: ListView(
-                        physics: const BouncingScrollPhysics(),
-                        scrollDirection: Axis.horizontal,
-                        cacheExtent: 200,
-                        addAutomaticKeepAlives: false,
-                        children: addChildren(
-                            recommendations: recommendations, player: player),
-                      ),
-                    );
-                  } else if (snapshot.hasError) {
-                    print('There was an error executing the future');
-                    print(snapshot.error);
-                    return const NoConnection();
-                  } else {
-                    // Loading...
-                    print('State is:');
-                    print(snapshot.connectionState);
-                    return Container(
-                      color: const Color(0xFFE9EFFF),
-                      alignment: Alignment.center,
-                      child: const CircularProgressIndicator(),
-                    );
-                  }
-                },
-              ),
-              // Work-Out songs for you
-              Container(
-                margin: const EdgeInsets.only(left: 15, bottom: 5, top: 20),
-                child: const Text(
-                  'Work-out songs for you',
-                  style: TextStyle(
-                    fontFamily: 'SyneBold',
-                    fontSize: 22,
-                  ),
-                ),
-              ),
-              // Horizontal Scrolling Area
-              FutureBuilder(
-                future: fetchGenre(
-                  accessToken: accessToken,
-                  refreshToken: refreshToken,
-                  genre: 'work-out',
-                ),
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done &&
-                      snapshot.hasData) {
-                    print('Acoustic Song Future Completed');
-                    List recommendations = snapshot.data;
-                    print("Recommendations: $recommendations");
-                    return SizedBox(
-                      height: width / 2,
-                      child: ListView(
-                        physics: const BouncingScrollPhysics(),
-                        scrollDirection: Axis.horizontal,
-                        cacheExtent: 200,
-                        addAutomaticKeepAlives: false,
-                        children: addChildren(
-                            recommendations: recommendations, player: player),
-                      ),
-                    );
-                  } else if (snapshot.hasError) {
-                    print('There was an error executing the future');
-                    print(snapshot.error);
-                    return const NoConnection();
-                  } else {
-                    // Loading...
-                    print('State is:');
-                    print(snapshot.connectionState);
-                    return Container(
-                      color: const Color(0xFFE9EFFF),
-                      alignment: Alignment.center,
-                      child: const CircularProgressIndicator(),
-                    );
-                  }
-                },
-              ),
-              const SizedBox(height: 10),
-            ],
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    if (snapshot.connectionState == ConnectionState.done &&
+                        snapshot.hasData) {
+                      print('$capitalizedGenre song future completed');
+                      List recommendations = snapshot.data;
+                      return SizedBox(
+                        height: width / 2,
+                        child: ListView(
+                          physics: const BouncingScrollPhysics(),
+                          scrollDirection: Axis.horizontal,
+                          cacheExtent: 200,
+                          addAutomaticKeepAlives: false,
+                          children: addChildren(
+                              recommendations: recommendations, player: player),
+                        ),
+                      );
+                    } else if (snapshot.hasError) {
+                      print('There was an error executing the future');
+                      print(snapshot.error);
+                      return const NoConnection();
+                    } else {
+                      print(snapshot.connectionState);
+                      // Loading...
+                      return Container(
+                        color: const Color(0xFFE9EFFF),
+                        alignment: Alignment.center,
+                        child: const CircularProgressIndicator(),
+                      );
+                    }
+                  },
+                );
+              }
+              Column column = Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  headingText,
+                  scrollingArea,
+                  // After the last recommendation, there should be some whitespace
+                  index == 12 ? const SizedBox(height: 10) : Container(),
+                ],
+              );
+              return column;
+            },
           ),
         ),
       ],

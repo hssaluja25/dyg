@@ -7,8 +7,6 @@ Future fetchRecommendations({
   required String accessToken,
   required String refreshToken,
 }) async {
-  print("Finding recommendations future of FutureBuilder is being executed");
-
   const storage = FlutterSecureStorage();
   String top5TracksIds = await storage.read(key: 'ids') ?? '';
 
@@ -28,8 +26,10 @@ Future fetchRecommendations({
     'https://api.spotify.com/v1/recommendations?seed_tracks=$top5TracksIds',
     options: cacheOptions,
   );
-  print(response.data);
-  print(response.statusCode);
+  if (response.statusCode != 200) {
+    print(response.statusCode);
+    print(response.data);
+  }
   print('\n\n');
   if (response.statusCode == 200) {
     final map = Map<String, dynamic>.from(response.data);
