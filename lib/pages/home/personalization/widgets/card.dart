@@ -2,6 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dyg/pages/home/components/share_button.dart';
 import 'package:dyg/services/play_preview.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_inset_box_shadow/flutter_inset_box_shadow.dart' as fibs;
 import 'package:just_audio/just_audio.dart';
 
 class CardCreate extends StatefulWidget {
@@ -28,6 +29,7 @@ class CardCreate extends StatefulWidget {
   final String fallbackUrl;
   final AudioPlayer player;
   late final double cardDimension;
+  bool isPressed = false;
 
   @override
   State<CardCreate> createState() => _CardCreateState();
@@ -36,49 +38,100 @@ class CardCreate extends StatefulWidget {
 class _CardCreateState extends State<CardCreate> {
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: widget.cardDimension,
-      height: widget.cardDimension,
-      child: Card(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        // If you use CircularBorder and you wrap the image (or any other widget)
-        // in Card, the child widget won't be clipped according to the Card shape.
-        // So you must use use ClipRRect and specify borderRadius. That's it.
-        // ClipRRect is a widget that clips its child using a rounded rectangle.
-        elevation: 3,
-        child: InkWell(
-          onTap: widget.playPreview
-              ? () async {
-                  playPreview(
-                      preview: widget.preview,
-                      context: context,
-                      player: widget.player,
-                      songIndex: widget.songIndex);
-                }
-              : () {},
-          child: Stack(
-            children: [
-              // Album Art/Artist Page
-              Ink(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  image: DecorationImage(
-                    image: NetworkImage(
-                      widget.img,
+    // The first argument sets [dx], the horizontal component, and the second sets [dy], the vertical component
+    final Offset offset =
+        widget.isPressed ? const Offset(8, 8) : const Offset(2, 2);
+    final blur = widget.isPressed ? 6.0 : 5.0;
+    return GestureDetector(
+      onTap: widget.playPreview
+          ? () async {
+              if (widget.preview == 'Preview not available') {
+                ScaffoldMessenger.of(context)
+                  ..removeCurrentSnackBar()
+                  ..showSnackBar(
+                    const SnackBar(
+                      content: Text('Sorry! Preview not available'),
                     ),
-                    fit: BoxFit.cover,
-                  ),
+                  );
+              } else {
+                setState(() => widget.isPressed = !widget.isPressed);
+                play(
+                    preview: widget.preview,
+                    context: context,
+                    player: widget.player,
+                    songIndex: widget.songIndex);
+              }
+            }
+          : () {},
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 100),
+        decoration: fibs.BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            // The lighter shadow to the top and to the left of the container
+            // The shadows should only go inside when the button is pressed.
+            fibs.BoxShadow(
+              inset: widget.isPressed,
+              offset: -offset,
+              blurRadius: blur,
+              color: const Color(0xFFf8dbda),
+            ),
+            // The dark shadow below and to the right of the container
+            fibs.BoxShadow(
+              inset: widget.isPressed,
+              blurRadius: blur,
+              offset: offset,
+              color: const Color(0xFFeb9a97),
+            ),
+          ],
+        ),
+        child: SizedBox(
+          width: widget.cardDimension,
+          height: widget.cardDimension,
+          child: Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: widget.isPressed
+                    ? widget.cardDimension - 7
+                    : widget.cardDimension,
+                maxWidth: widget.isPressed
+                    ? widget.cardDimension - 7
+                    : widget.cardDimension,
+              ),
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                elevation: 3,
+                child: Stack(
+                  children: [
+                    // Album Art/Artist Page
+                    Center(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: FadeInImage.assetNetwork(
+                          placeholder:
+                              'assets/images/personalization/placeholder.png',
+                          image: widget.img,
+                          // Because some images are not the size mentioned in the API documentation.
+                          // Recall the BoxFit.fill would not work here because the image is smaller than the container.
+                          width: widget.cardDimension,
+                          height: widget.cardDimension,
+                        ),
+                      ),
+                    ),
+
+                    // The row at the bottom containing the song track & the share button
+                    BottomRow(
+                      cardDimension: widget.cardDimension,
+                      name: widget.name,
+                      url: widget.url,
+                      fallbackUrl: widget.fallbackUrl,
+                    ),
+                  ],
                 ),
               ),
-
-              // The row at the bottom containing the song track & the share button
-              BottomRow(
-                cardDimension: widget.cardDimension,
-                name: widget.name,
-                url: widget.url,
-                fallbackUrl: widget.fallbackUrl,
-              ),
-            ],
+            ),
           ),
         ),
       ),
@@ -109,6 +162,7 @@ class BottomRow extends StatelessWidget {
         borderRadius: const BorderRadius.vertical(bottom: Radius.circular(20)),
         child: Container(
           height: cardDimension / 3,
+          width: cardDimension,
           color: Colors.black.withOpacity(0.6),
           padding: const EdgeInsets.only(bottom: 5, left: 5, right: 3),
           child: Row(

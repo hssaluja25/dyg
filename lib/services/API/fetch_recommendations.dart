@@ -44,7 +44,7 @@ Future fetchRecommendations({
       trackInfo['name'] = map['tracks'][i]['name'];
       // Add artist name
       trackInfo['artist'] = map['tracks'][i]['artists'][0]['name'];
-      // 300x300 album art
+      // 300x300 album art. The size of the image is not guaranteed to be 300x300
       trackInfo['img'] = map['tracks'][i]['album']['images'][1]['url'];
       // 640x640 album art
       // trackInfo["img"] = map['tracks'][0]['album']['images'][0]['url'];

@@ -40,7 +40,7 @@ findTopArtists({
       Map<String, String> artistInfo = {};
       // Add artist name
       artistInfo["name"] = map["items"][i]["name"];
-      // 320x320 image
+      // 320x320 image. The size of the image is not guaranteed to be 320x320
       artistInfo["img"] = map["items"][i]['images'][1]['url'];
       artistInfo["url"] = map["items"][i]["uri"];
       artistInfo["fallbackUrl"] = map["items"][i]['external_urls']['spotify'];

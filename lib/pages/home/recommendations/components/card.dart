@@ -42,7 +42,7 @@ class _RecommendationCardState extends State<RecommendationCard> {
         elevation: 3,
         child: InkWell(
           onTap: () async {
-            await playPreview(
+            await play(
                 preview: widget.preview,
                 context: context,
                 player: widget.player,
@@ -52,15 +52,15 @@ class _RecommendationCardState extends State<RecommendationCard> {
           child: Stack(
             children: [
               // Album Art
-              Ink(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(40),
-                  image: DecorationImage(
-                    image: NetworkImage(
-                      widget.albumArt,
-                    ),
-                    fit: BoxFit.cover,
-                  ),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(40),
+                child: FadeInImage.assetNetwork(
+                  placeholder: 'assets/images/personalization/placeholder.png',
+                  image: widget.albumArt,
+                  // Because some images are not the size mentioned in the API documentation.
+                  // Recall the BoxFit.fill would not work here because the image is smaller than the container.
+                  width: width,
+                  height: height,
                 ),
               ),
               // Track and Artist name

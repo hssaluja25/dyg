@@ -50,7 +50,7 @@ Future findTopTracks({
 
       // Add track name
       trackInfo["name"] = map["items"][i]['name'];
-      // 300x300 album art
+      // 300x300 album art. The size of the image is not guaranteed to be 300x300
       trackInfo["img"] = map["items"][i]['album']['images'][1]['url'];
       // 640x640 album art
       // trackInfo["img"] = map["items"][0]['album']['images'][0]['url'];
