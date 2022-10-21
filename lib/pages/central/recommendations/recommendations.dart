@@ -77,6 +77,11 @@ class _RecommendationsPageState extends State<RecommendationsPage> {
             itemBuilder: (BuildContext context, int index) {
               Container headingText;
               FutureBuilder scrollingArea;
+              late final Future fetchRecommendationsFuture =
+                  fetchRecommendations(
+                accessToken: accessToken,
+                refreshToken: refreshToken,
+              );
               if (index == 0) {
                 headingText = Container(
                   margin: const EdgeInsets.only(left: 15, bottom: 5, top: 20),
@@ -90,10 +95,7 @@ class _RecommendationsPageState extends State<RecommendationsPage> {
                 );
                 // Horizontal Scrolling Area
                 scrollingArea = FutureBuilder(
-                  future: fetchRecommendations(
-                    accessToken: accessToken,
-                    refreshToken: refreshToken,
-                  ),
+                  future: fetchRecommendationsFuture,
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
                     if (snapshot.connectionState == ConnectionState.done &&
                         snapshot.hasData) {
@@ -149,13 +151,14 @@ class _RecommendationsPageState extends State<RecommendationsPage> {
                   ),
                 );
 
+                late final Future fetchGenreFuture = fetchGenre(
+                  accessToken: accessToken,
+                  refreshToken: refreshToken,
+                  genre: genre,
+                );
                 // Horizontal Scrolling Area
                 scrollingArea = FutureBuilder(
-                  future: fetchGenre(
-                    accessToken: accessToken,
-                    refreshToken: refreshToken,
-                    genre: genre,
-                  ),
+                  future: fetchGenreFuture,
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
                     if (snapshot.connectionState == ConnectionState.done &&
                         snapshot.hasData) {

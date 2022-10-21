@@ -33,15 +33,16 @@ class _HomePageState extends State<HomePage> {
   final String refreshToken;
   // Whether to show top tracks or top artists
   bool showTopTracks = true;
+  late final Future topTracksFuture =
+      findTopTracks(accessToken: accessToken, refreshToken: refreshToken);
+  late final Future topArtistsFuture =
+      findTopArtists(accessToken: accessToken, refreshToken: refreshToken);
 
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     return FutureBuilder(
-      future: showTopTracks
-          ? findTopTracks(accessToken: accessToken, refreshToken: refreshToken)
-          : findTopArtists(
-              accessToken: accessToken, refreshToken: refreshToken),
+      future: showTopTracks ? topTracksFuture : topArtistsFuture,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         // The first condition is important when we need to refresh
         // access tokens

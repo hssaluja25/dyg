@@ -16,16 +16,10 @@ class CentralPage extends StatefulWidget {
 }
 
 class _CentralPageState extends State<CentralPage> {
-  _CentralPageState(
-      {required String accessToken, required String refreshToken}) {
-    screens = [
-      HomePage(
-          accessToken: accessToken, refreshToken: refreshToken, player: player),
-      RecommendationsPage(
-          accessToken: accessToken, refreshToken: refreshToken, player: player),
-      const Center(child: Text('3rd Screen')),
-    ];
-  }
+  _CentralPageState({required this.accessToken, required this.refreshToken});
+
+  final String accessToken;
+  final String refreshToken;
   late List<Widget> screens;
   int _currentIndex = 0;
   final AudioPlayer player = AudioPlayer();
@@ -40,7 +34,20 @@ class _CentralPageState extends State<CentralPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        body: screens[_currentIndex],
+        body: IndexedStack(
+          index: _currentIndex,
+          children: [
+            HomePage(
+                accessToken: accessToken,
+                refreshToken: refreshToken,
+                player: player),
+            RecommendationsPage(
+                accessToken: accessToken,
+                refreshToken: refreshToken,
+                player: player),
+            const Center(child: Text('3rd Screen')),
+          ],
+        ),
         bottomNavigationBar: _buildBNB(),
       ),
     );

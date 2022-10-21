@@ -32,6 +32,8 @@ class _DygState extends State<Dyg> {
   bool loginIsDoneOnce = true;
   String? accessToken;
   String? refreshToken;
+  late final Future obtainTokensFuture = obtainTokens();
+  late final Future checkConnectionFuture = checkInternetConnection();
 
   Future<void> obtainTokens() async {
     print('Obtaining tokens now');
@@ -66,13 +68,13 @@ class _DygState extends State<Dyg> {
       debugShowCheckedModeBanner: false,
       home: SafeArea(
         child: FutureBuilder(
-          future: checkInternetConnection(),
+          future: checkConnectionFuture,
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.hasData) {
               // There is internet availability
               if (snapshot.data) {
                 return FutureBuilder(
-                  future: obtainTokens(),
+                  future: obtainTokensFuture,
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
                     if (snapshot.connectionState == ConnectionState.done) {
                       return loginIsDoneOnce == false
