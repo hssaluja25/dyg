@@ -1,5 +1,5 @@
-import 'package:dyg/pages/home/personalization/personalization.dart';
-import 'package:dyg/pages/home/recommendations/recommendations.dart';
+import 'package:dyg/pages/central/home/home.dart';
+import 'package:dyg/pages/central/recommendations/recommendations.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:just_audio/just_audio.dart';

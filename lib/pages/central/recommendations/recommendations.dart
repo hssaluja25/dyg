@@ -1,4 +1,4 @@
-import 'package:dyg/pages/home/recommendations/components/horizontal_scrolling_area.dart';
+import 'package:dyg/pages/central/recommendations/components/horizontal_scrolling_area.dart';
 import 'package:dyg/services/API/fetch_recommendations.dart';
 import 'package:dyg/services/API/recommend_genre.dart';
 import 'package:flutter/material.dart';

@@ -1,5 +1,5 @@
-import 'package:dyg/pages/home/home.dart';
-import 'package:dyg/pages/home/personalization/widgets/no_connection.dart';
+import 'package:dyg/pages/central/central.dart';
+import 'package:dyg/pages/central/home/widgets/no_connection.dart';
 import 'package:dyg/services/check_connectivity.dart';
 import 'package:flutter/material.dart';
 // For setting preferred orientation

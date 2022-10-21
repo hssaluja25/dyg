@@ -1,5 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:dyg/pages/home/components/share_button.dart';
+import 'package:dyg/pages/central/components/share_button.dart';
 import 'package:dyg/services/play_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inset_box_shadow/flutter_inset_box_shadow.dart' as fibs;

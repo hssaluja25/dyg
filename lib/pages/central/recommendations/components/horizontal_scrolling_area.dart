@@ -1,4 +1,4 @@
-import 'package:dyg/pages/home/recommendations/components/card.dart';
+import 'package:dyg/pages/central/recommendations/components/card.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 

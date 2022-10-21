@@ -1,4 +1,4 @@
-import 'package:dyg/pages/home/home.dart';
+import 'package:dyg/pages/central/central.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_web_auth/flutter_web_auth.dart';

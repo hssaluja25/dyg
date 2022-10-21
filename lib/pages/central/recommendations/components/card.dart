@@ -1,4 +1,4 @@
-import 'package:dyg/pages/home/components/share_button.dart';
+import 'package:dyg/pages/central/components/share_button.dart';
 import 'package:dyg/services/play_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
