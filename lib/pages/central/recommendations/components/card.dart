@@ -42,11 +42,21 @@ class _RecommendationCardState extends State<RecommendationCard> {
         elevation: 3,
         child: InkWell(
           onTap: () async {
-            await play(
-                preview: widget.preview,
-                context: context,
-                player: widget.player,
-                songIndex: widget.songIndex);
+            if (widget.preview == 'Preview not available') {
+              ScaffoldMessenger.of(context)
+                ..removeCurrentSnackBar()
+                ..showSnackBar(
+                  const SnackBar(
+                    content: Text('Sorry! Preview not available'),
+                  ),
+                );
+            } else {
+              await play(
+                  preview: widget.preview,
+                  context: context,
+                  player: widget.player,
+                  songIndex: widget.songIndex);
+            }
           },
           borderRadius: BorderRadius.circular(40),
           child: Stack(
