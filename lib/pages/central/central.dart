@@ -4,21 +4,22 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:just_audio/just_audio.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage(
+class CentralPage extends StatefulWidget {
+  const CentralPage(
       {required this.accessToken, required this.refreshToken, super.key});
   final String accessToken;
   final String refreshToken;
 
   @override
-  State<HomePage> createState() =>
-      _HomePageState(accessToken: accessToken, refreshToken: refreshToken);
+  State<CentralPage> createState() =>
+      _CentralPageState(accessToken: accessToken, refreshToken: refreshToken);
 }
 
-class _HomePageState extends State<HomePage> {
-  _HomePageState({required String accessToken, required String refreshToken}) {
+class _CentralPageState extends State<CentralPage> {
+  _CentralPageState(
+      {required String accessToken, required String refreshToken}) {
     screens = [
-      PersonalizationPage(
+      HomePage(
           accessToken: accessToken, refreshToken: refreshToken, player: player),
       RecommendationsPage(
           accessToken: accessToken, refreshToken: refreshToken, player: player),

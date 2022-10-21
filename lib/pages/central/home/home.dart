@@ -7,8 +7,8 @@ import 'package:just_audio/just_audio.dart';
 import '../components/log_out_button.dart';
 import 'widgets/scrolling_area.dart';
 
-class PersonalizationPage extends StatefulWidget {
-  const PersonalizationPage(
+class HomePage extends StatefulWidget {
+  const HomePage(
       {required this.accessToken,
       required this.refreshToken,
       required this.player,
@@ -19,12 +19,12 @@ class PersonalizationPage extends StatefulWidget {
 
   // I have done this because widget.accessToken and widget.refreshToken are empty. Confirm it.
   @override
-  State<PersonalizationPage> createState() => _PersonalizationPageState(
+  State<HomePage> createState() => _HomePageState(
       accessToken: accessToken, refreshToken: refreshToken, player: player);
 }
 
-class _PersonalizationPageState extends State<PersonalizationPage> {
-  _PersonalizationPageState(
+class _HomePageState extends State<HomePage> {
+  _HomePageState(
       {required this.accessToken,
       required this.refreshToken,
       required this.player});

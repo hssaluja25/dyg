@@ -121,7 +121,7 @@ openHomePage(
     context,
     MaterialPageRoute(
       builder: (BuildContext context) {
-        return HomePage(
+        return CentralPage(
           accessToken: accessToken,
           refreshToken: refreshToken,
         );

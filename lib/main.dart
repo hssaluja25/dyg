@@ -77,7 +77,7 @@ class _DygState extends State<Dyg> {
                     if (snapshot.connectionState == ConnectionState.done) {
                       return loginIsDoneOnce == false
                           ? const OnboardingPage()
-                          : HomePage(
+                          : CentralPage(
                               accessToken: accessToken ?? '',
                               refreshToken: refreshToken ?? '',
                             );
