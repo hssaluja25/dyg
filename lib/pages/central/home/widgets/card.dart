@@ -172,6 +172,7 @@ class BottomRow extends StatelessWidget {
               Expanded(
                 child: AutoSizeText(
                   name,
+                  overflowReplacement: const Text('Name too long to display'),
                   style: const TextStyle(
                     color: Colors.white,
                     fontFamily: 'Syne',
