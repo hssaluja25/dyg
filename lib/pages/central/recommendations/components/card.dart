@@ -119,8 +119,14 @@ class _RecommendationCardState extends State<RecommendationCard> {
               Positioned(
                 bottom: 10,
                 right: 10,
-                child: ShareButton(
-                    url: widget.url, fallbackUrl: widget.fallbackUrl),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.6),
+                    borderRadius: BorderRadius.circular(40),
+                  ),
+                  child: ShareButton(
+                      url: widget.url, fallbackUrl: widget.fallbackUrl),
+                ),
               ),
             ],
           ),
