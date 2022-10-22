@@ -4,7 +4,6 @@ import 'package:dyg/services/API/recommend_genre.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:just_audio/just_audio.dart';
-
 import '../components/log_out_button.dart';
 
 class RecommendationsPage extends StatefulWidget {
@@ -30,6 +29,10 @@ class _RecommendationsPageState extends State<RecommendationsPage> {
   final AudioPlayer player;
   final String accessToken;
   final String refreshToken;
+  late final Future fetchRecommendationsFuture = fetchRecommendations(
+    accessToken: accessToken,
+    refreshToken: refreshToken,
+  );
   // Used by ListView.builder
   List<String> listOfRecommendations = [
     'Recommended',
@@ -46,10 +49,24 @@ class _RecommendationsPageState extends State<RecommendationsPage> {
     'sad',
     'work-out',
   ];
+  late final List<Future> fetchGenreFutures = [Future(() => null)];
+
+  @override
+  void initState() {
+    super.initState();
+    for (int i = 1; i < listOfRecommendations.length; i++) {
+      fetchGenreFutures.add(
+        fetchGenre(
+          accessToken: accessToken,
+          refreshToken: refreshToken,
+          genre: listOfRecommendations[i],
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    print('\n\n\n\n Opened Recommendations Page \n\n\n\n');
     double width = MediaQuery.of(context).size.width;
     return Stack(
       children: [
@@ -69,7 +86,9 @@ class _RecommendationsPageState extends State<RecommendationsPage> {
           bottom: 0,
           left: 0,
           right: 0,
-          child: ListView.builder(
+          child:
+              // Returns Column(heading, scrollingArea)
+              ListView.builder(
             physics: const BouncingScrollPhysics(),
             addAutomaticKeepAlives: false,
             cacheExtent: 100,
@@ -77,11 +96,6 @@ class _RecommendationsPageState extends State<RecommendationsPage> {
             itemBuilder: (BuildContext context, int index) {
               Container headingText;
               FutureBuilder scrollingArea;
-              late final Future fetchRecommendationsFuture =
-                  fetchRecommendations(
-                accessToken: accessToken,
-                refreshToken: refreshToken,
-              );
               if (index == 0) {
                 headingText = Container(
                   margin: const EdgeInsets.only(left: 15, bottom: 5, top: 20),
@@ -99,7 +113,8 @@ class _RecommendationsPageState extends State<RecommendationsPage> {
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
                     if (snapshot.connectionState == ConnectionState.done &&
                         snapshot.hasData) {
-                      print('Fetch Recommendations Future Completed');
+                      print(
+                          'Inside Recom. FB: Fetch Recommendations Future Completed');
                       List recommendations = snapshot.data;
                       return SizedBox(
                         height: width / 2,
@@ -150,19 +165,14 @@ class _RecommendationsPageState extends State<RecommendationsPage> {
                     ),
                   ),
                 );
-
-                late final Future fetchGenreFuture = fetchGenre(
-                  accessToken: accessToken,
-                  refreshToken: refreshToken,
-                  genre: genre,
-                );
                 // Horizontal Scrolling Area
                 scrollingArea = FutureBuilder(
-                  future: fetchGenreFuture,
+                  future: fetchGenreFutures[index],
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
                     if (snapshot.connectionState == ConnectionState.done &&
                         snapshot.hasData) {
-                      print('$capitalizedGenre song future completed');
+                      print(
+                          'Inside Recom. FB: $capitalizedGenre song future completed');
                       List recommendations = snapshot.data;
                       return SizedBox(
                         height: width / 2,

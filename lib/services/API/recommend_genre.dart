@@ -7,6 +7,7 @@ Future fetchGenre({
   required String accessToken,
   required String refreshToken,
 }) async {
+  print('Fetching recommendations for $genre....');
   DioCacheManager dcm = DioCacheManager(CacheConfig());
   Options cacheOptions = buildCacheOptions(
     const Duration(hours: 1),

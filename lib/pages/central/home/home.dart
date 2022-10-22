@@ -50,6 +50,7 @@ class _HomePageState extends State<HomePage> {
             snapshot.hasData) {
           // This list would contain either user's top tracks or top artists
           // depending on what the user wants
+          print("Inside home's FutureBuilder");
           List usersTopList = snapshot.data;
           return Stack(
             children: [

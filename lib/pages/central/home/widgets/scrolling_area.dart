@@ -9,9 +9,7 @@ List<Widget> createScrollingArea(
     required double width,
     required AudioPlayer player}) {
   int total = usersTopList.length;
-  print('Number of top songs/artists is $total');
   int rows = total ~/ 2;
-  print('Number of rows required is $rows');
 
   // This list would be passed to ListView
   List<Widget> children = [];

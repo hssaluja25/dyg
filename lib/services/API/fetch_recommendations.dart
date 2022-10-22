@@ -7,6 +7,7 @@ Future fetchRecommendations({
   required String accessToken,
   required String refreshToken,
 }) async {
+  print('Fetching recommendations for user...');
   const storage = FlutterSecureStorage();
   String top5TracksIds = await storage.read(key: 'ids') ?? '';
 
@@ -30,7 +31,6 @@ Future fetchRecommendations({
     print(response.statusCode);
     print(response.data);
   }
-  print('\n\n');
   if (response.statusCode == 200) {
     final map = Map<String, dynamic>.from(response.data);
 
