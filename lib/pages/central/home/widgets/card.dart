@@ -57,7 +57,6 @@ class _CardCreateState extends State<CardCreate> {
                 setState(() => widget.isPressed = !widget.isPressed);
                 play(
                     preview: widget.preview,
-                    context: context,
                     player: widget.player,
                     songIndex: widget.songIndex);
               }

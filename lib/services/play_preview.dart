@@ -1,9 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 
 Future play({
   required String preview,
-  required BuildContext context,
   required AudioPlayer player,
   required int songIndex,
 }) async {

@@ -1,5 +1,6 @@
 import 'package:dyg/pages/central/home/home.dart';
 import 'package:dyg/pages/central/recommendations/recommendations.dart';
+import 'package:dyg/pages/central/tasteCompate/taste_compare.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:just_audio/just_audio.dart';
@@ -34,6 +35,8 @@ class _CentralPageState extends State<CentralPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        // To prevent distortion of images when user taps on textfield.
+        resizeToAvoidBottomInset: false,
         body: IndexedStack(
           index: _currentIndex,
           children: [
@@ -45,7 +48,7 @@ class _CentralPageState extends State<CentralPage> {
                 accessToken: accessToken,
                 refreshToken: refreshToken,
                 player: player),
-            const Center(child: Text('3rd Screen')),
+            const TasteCompare(),
           ],
         ),
         bottomNavigationBar: _buildBNB(),

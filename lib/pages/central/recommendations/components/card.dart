@@ -53,7 +53,6 @@ class _RecommendationCardState extends State<RecommendationCard> {
             } else {
               await play(
                   preview: widget.preview,
-                  context: context,
                   player: widget.player,
                   songIndex: widget.songIndex);
             }
