@@ -66,6 +66,7 @@ class CodeField extends StatelessWidget {
             height: 50,
             child: TextButton(
               onPressed: () async {
+                // The upper code field
                 if (btnText == 'Copy') {
                   final sm = ScaffoldMessenger.of(context);
                   await Clipboard.setData(
@@ -75,14 +76,36 @@ class CodeField extends StatelessWidget {
                     ..showSnackBar(const SnackBar(
                       content: Text('Copied'),
                     ));
-                } else {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (BuildContext context) => const Scaffold(
-                          body: Center(child: Text("Who's there?"))),
-                    ),
-                  );
+                }
+                // The lower code field
+                else {
+                  final String friendCode = _controller.text;
+                  if (friendCode == '') {
+                    ScaffoldMessenger.of(context)
+                      ..removeCurrentSnackBar()
+                      ..showSnackBar(
+                        const SnackBar(
+                          content: Text('Cannot be empty'),
+                        ),
+                      );
+                  } else if (friendCode == 'ewf80efjl1280vefjo') {
+                    ScaffoldMessenger.of(context)
+                      ..removeCurrentSnackBar()
+                      ..showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                              'You cannot compare music taste with yourself'),
+                        ),
+                      );
+                  } else {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (BuildContext context) => const Scaffold(
+                            body: Center(child: Text("Who's there?"))),
+                      ),
+                    );
+                  }
                 }
               },
               style: TextButton.styleFrom(
