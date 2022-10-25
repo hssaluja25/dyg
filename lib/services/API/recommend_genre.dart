@@ -71,6 +71,6 @@ Future fetchGenre({
     );
   } else {
     print('Error fetching $genre recommendations');
-    throw Exception('Error fetching recommendations');
+    throw Exception('Error fetching $genre recommendations');
   }
 }

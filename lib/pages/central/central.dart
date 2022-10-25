@@ -41,13 +41,15 @@ class _CentralPageState extends State<CentralPage> {
           index: _currentIndex,
           children: [
             HomePage(
-                accessToken: accessToken,
-                refreshToken: refreshToken,
-                player: player),
+              accessToken: accessToken,
+              refreshToken: refreshToken,
+              player: player,
+            ),
             RecommendationsPage(
-                accessToken: accessToken,
-                refreshToken: refreshToken,
-                player: player),
+              accessToken: accessToken,
+              refreshToken: refreshToken,
+              player: player,
+            ),
             const TasteCompare(),
           ],
         ),

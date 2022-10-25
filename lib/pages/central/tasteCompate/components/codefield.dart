@@ -3,16 +3,13 @@ import 'package:flutter/services.dart';
 
 /// Displays TextField and the TextButton in a Row.
 class CodeField extends StatelessWidget {
-  CodeField({required this.btnText, super.key}) {
+  CodeField({required this.btnText, required this.userId, super.key}) {
     _controller = TextEditingController(
-      text: btnText == 'Copy'
-          ?
-          // User id
-          'ewf80efjl1280vefjo'
-          : '',
+      text: btnText == 'Copy' ? userId : '',
     );
   }
   final String btnText;
+  final String userId;
   TextEditingController _controller = TextEditingController();
 
   @override
@@ -88,7 +85,7 @@ class CodeField extends StatelessWidget {
                           content: Text('Cannot be empty'),
                         ),
                       );
-                  } else if (friendCode == 'ewf80efjl1280vefjo') {
+                  } else if (friendCode == userId) {
                     ScaffoldMessenger.of(context)
                       ..removeCurrentSnackBar()
                       ..showSnackBar(

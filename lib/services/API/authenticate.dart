@@ -1,4 +1,5 @@
 import 'package:dyg/pages/central/central.dart';
+import 'package:dyg/services/API/fetch_user_id.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_web_auth/flutter_web_auth.dart';
@@ -35,7 +36,7 @@ void authenticate({required BuildContext context}) async {
   final String state = generateRandomString(length: 20);
 
   String url =
-      'https://accounts.spotify.com/authorize?client_id=$clientId&response_type=code&state=$state&redirect_uri=com.analysis.spotify%3A%2F%2Flogin-callback&scope=user-top-read&code_challenge_method=S256&code_challenge=$codeChallenge';
+      'https://accounts.spotify.com/authorize?client_id=$clientId&response_type=code&state=$state&redirect_uri=com.analysis.spotify%3A%2F%2Flogin-callback&scope=user-top-read%20user-read-private%20user-read-email&code_challenge_method=S256&code_challenge=$codeChallenge';
 
   try {
     // Present the dialog to the user
@@ -91,6 +92,7 @@ void authenticate({required BuildContext context}) async {
       );
       store(key: 'refreshToken', input: encryptedRefreshToken);
 
+      await fetchUserId(accessToken: accessToken, refreshToken: refreshToken);
       openHomePage(
           context: context,
           accessToken: accessToken,
