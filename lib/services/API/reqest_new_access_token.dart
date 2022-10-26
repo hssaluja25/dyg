@@ -25,8 +25,10 @@ Future<dynamic> requestRefreshedAccessToken(
       'refresh_token': refreshToken,
     },
   );
-  print(response.statusCode);
-  print(response.data);
+  if (response.statusCode != 200) {
+    print(response.statusCode);
+    print(response.data);
+  }
   if (response.statusCode == 200) {
     print('Successfully retrieved new access tokens');
     final map = Map<String, dynamic>.from(response.data);
@@ -45,6 +47,12 @@ Future<dynamic> requestRefreshedAccessToken(
       input: map['refresh_token'],
     );
     store(key: 'refreshToken', input: encryptedRefreshToken);
+
+    // Store new expiry time
+    final DateTime oneHrFromNow =
+        DateTime.now().add(const Duration(minutes: 58));
+    store(key: 'expiryTime', input: oneHrFromNow.toString());
+
     return map['access_token'];
   }
   // Refresh token has been revoked.

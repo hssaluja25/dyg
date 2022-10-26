@@ -91,6 +91,9 @@ void authenticate({required BuildContext context}) async {
         input: refreshToken,
       );
       store(key: 'refreshToken', input: encryptedRefreshToken);
+      final DateTime oneHrFromNow =
+          DateTime.now().add(const Duration(minutes: 58));
+      store(key: 'expiryTime', input: oneHrFromNow.toString());
 
       await fetchUserId(accessToken: accessToken, refreshToken: refreshToken);
       openHomePage(

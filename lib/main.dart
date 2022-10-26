@@ -1,5 +1,6 @@
 import 'package:dyg/pages/central/central.dart';
 import 'package:dyg/pages/central/home/widgets/no_connection.dart';
+import 'package:dyg/services/API/reqest_new_access_token.dart';
 import 'package:dyg/services/check_connectivity.dart';
 import 'package:flutter/material.dart';
 // For setting preferred orientation
@@ -37,21 +38,36 @@ class _DygState extends State<Dyg> {
 
   Future<void> obtainTokens() async {
     print('Obtaining tokens now');
-    if (await storage.containsKey(key: 'accessToken')) {
+    if (await storage.containsKey(key: 'expiryTime')) {
       print('Access token exists already');
-      final String encryptedAccessToken =
-          await storage.read(key: 'accessToken') ?? '';
+      DateTime crtTime = DateTime.now();
+      String expiry = await storage.read(key: 'expiryTime') ?? '';
+      DateTime expiryTime = DateTime.parse(expiry);
+
       final String encryptedRefreshToken =
           await storage.read(key: 'refreshToken') ?? '';
-      accessToken = decrypt(
-        decryptionKey: config.encryptionKeyForAccessToken,
-        input: encryptedAccessToken,
-      );
       refreshToken = decrypt(
         decryptionKey: config.encryptionKeyForRefreshToken,
         input: encryptedRefreshToken,
       );
-      print("Access token is $accessToken");
+
+      // Current time is less than the expiration time i.e., the tokens are still valid
+      if (crtTime.isBefore(expiryTime)) {
+        print('Tokens are still valid');
+        final String encryptedAccessToken =
+            await storage.read(key: 'accessToken') ?? '';
+        accessToken = decrypt(
+          decryptionKey: config.encryptionKeyForAccessToken,
+          input: encryptedAccessToken,
+        );
+        print("Access token is $accessToken");
+      } else {
+        // Tokens are not valid. Get new access token.
+        print('Tokens have expired.');
+        accessToken =
+            await requestRefreshedAccessToken(refreshToken: refreshToken ?? '');
+        print("Access token is $accessToken");
+      }
       print('Refresh token is $refreshToken');
     } else {
       print('Access token does not exist');
