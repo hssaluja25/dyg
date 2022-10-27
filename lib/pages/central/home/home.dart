@@ -1,6 +1,8 @@
+import 'package:dyg/services/firestore/upload.dart';
 import 'package:flutter/material.dart';
 import 'package:dyg/services/API/fetch_top_artists.dart';
 import 'package:dyg/services/API/fetch_top_tracks.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:just_audio/just_audio.dart';
 
@@ -37,6 +39,28 @@ class _HomePageState extends State<HomePage> {
       findTopTracks(accessToken: accessToken, refreshToken: refreshToken);
   late final Future topArtistsFuture =
       findTopArtists(accessToken: accessToken, refreshToken: refreshToken);
+
+  @override
+  void initState() {
+    super.initState();
+    () async {
+      const storage = FlutterSecureStorage();
+      // On app install, upload time would not be in the storage (it is set in the upload function which has not yet been executed.)
+      // Using the following conditional, the if condition below would be satified
+      String time =
+          await storage.read(key: 'uploadTime') ?? DateTime.now().toString();
+      DateTime uploadTime = DateTime.parse(time);
+      DateTime crtTime = DateTime.now();
+
+      // If 4 days have passed, upload user's followed artists
+      if (crtTime.isAfter(uploadTime)) {
+        Future.delayed(
+          const Duration(seconds: 3),
+          () => upload(accessToken: accessToken, refreshToken: refreshToken),
+        );
+      }
+    }();
+  }
 
   @override
   Widget build(BuildContext context) {

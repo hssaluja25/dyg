@@ -10,6 +10,8 @@ dependencies:
     sdk: flutter
   font_awesome_flutter: ^10.2.1
   flutter_web_auth: ^0.4.1
+  firebase_core: ^2.1.0
+  cloud_firestore: ^4.0.2
   flutter_inset_box_shadow: ^1.0.8
   pkce: ^1.1.0+1
   dio: ^4.0.6

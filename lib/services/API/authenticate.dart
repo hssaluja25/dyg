@@ -36,7 +36,7 @@ void authenticate({required BuildContext context}) async {
   final String state = generateRandomString(length: 20);
 
   String url =
-      'https://accounts.spotify.com/authorize?client_id=$clientId&response_type=code&state=$state&redirect_uri=com.analysis.spotify%3A%2F%2Flogin-callback&scope=user-top-read%20user-read-private%20user-read-email&code_challenge_method=S256&code_challenge=$codeChallenge';
+      'https://accounts.spotify.com/authorize?client_id=$clientId&response_type=code&state=$state&redirect_uri=com.analysis.spotify%3A%2F%2Flogin-callback&scope=user-top-read%20user-read-private%20user-read-email%20user-follow-read&code_challenge_method=S256&code_challenge=$codeChallenge';
 
   try {
     // Present the dialog to the user

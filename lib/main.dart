@@ -2,6 +2,7 @@ import 'package:dyg/pages/central/central.dart';
 import 'package:dyg/pages/central/home/widgets/no_connection.dart';
 import 'package:dyg/services/API/reqest_new_access_token.dart';
 import 'package:dyg/services/check_connectivity.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 // For setting preferred orientation
 import 'package:flutter/services.dart';
@@ -10,9 +11,14 @@ import 'package:dyg/pages/onboarding/onboarding.dart';
 import 'package:dyg/services/API/config.dart' as config;
 import 'package:dyg/services/decode.dart';
 
-void main() {
+import 'firebase_options.dart';
+
+Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(
     const AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(statusBarColor: Colors.transparent),
