@@ -1,9 +1,11 @@
-import 'package:dyg/pages/central/recommendations/components/horizontal_scrolling_area.dart';
-import 'package:dyg/services/API/fetch_recommendations.dart';
-import 'package:dyg/services/API/recommend_genre.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:provider/provider.dart';
+import 'components/horizontal_scrolling_area.dart';
+import '../../../services/API/fetch_recommendations.dart';
+import '../../../services/API/recommend_genre.dart';
+import '../../../providers/top_tracks_done.dart';
 import '../components/log_out_button.dart';
 
 class RecommendationsPage extends StatefulWidget {
@@ -67,6 +69,7 @@ class _RecommendationsPageState extends State<RecommendationsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final done = context.watch<TopTracksDone>().topTracksDone;
     double width = MediaQuery.of(context).size.width;
     return Stack(
       children: [
@@ -95,7 +98,7 @@ class _RecommendationsPageState extends State<RecommendationsPage> {
             itemCount: 13,
             itemBuilder: (BuildContext context, int index) {
               Container headingText;
-              FutureBuilder scrollingArea;
+              Widget scrollingArea;
               if (index == 0) {
                 headingText = Container(
                   margin: const EdgeInsets.only(left: 15, bottom: 5, top: 20),
@@ -108,49 +111,58 @@ class _RecommendationsPageState extends State<RecommendationsPage> {
                   ),
                 );
                 // Horizontal Scrolling Area
-                scrollingArea = FutureBuilder(
-                  future: fetchRecommendationsFuture,
-                  builder: (BuildContext context, AsyncSnapshot snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done &&
-                        snapshot.hasData) {
-                      print(
-                          'Inside Recom. FB: Fetch Recommendations Future Completed');
-                      List recommendations = snapshot.data;
-                      return SizedBox(
-                        height: width / 2,
-                        child: ListView(
-                          physics: const BouncingScrollPhysics(),
-                          scrollDirection: Axis.horizontal,
-                          cacheExtent: 200,
-                          addAutomaticKeepAlives: false,
-                          children: addChildren(
-                              recommendations: recommendations, player: player),
-                        ),
-                      );
-                    } else if (snapshot.hasError) {
-                      print(snapshot.error);
-                      return Container(
-                        margin: const EdgeInsets.only(left: 15),
-                        child: const Text(
-                          'Oops! The server cannot currently process this request. Please try again after some time.',
-                          style: TextStyle(
-                            fontFamily: 'SyneBold',
-                            fontSize: 16,
-                            color: Colors.redAccent,
-                          ),
-                        ),
-                      );
-                    } else {
-                      // Loading...
-                      print(snapshot.connectionState);
-                      return Container(
+                scrollingArea = done
+                    ? FutureBuilder(
+                        future: fetchRecommendationsFuture,
+                        builder:
+                            (BuildContext context, AsyncSnapshot snapshot) {
+                          if (snapshot.connectionState ==
+                                  ConnectionState.done &&
+                              snapshot.hasData) {
+                            print(
+                                'Inside Recom. FB: Fetch Recommendations Future Completed');
+                            List recommendations = snapshot.data;
+                            return SizedBox(
+                              height: width / 2,
+                              child: ListView(
+                                physics: const BouncingScrollPhysics(),
+                                scrollDirection: Axis.horizontal,
+                                cacheExtent: 200,
+                                addAutomaticKeepAlives: false,
+                                children: addChildren(
+                                    recommendations: recommendations,
+                                    player: player),
+                              ),
+                            );
+                          } else if (snapshot.hasError) {
+                            print(snapshot.error);
+                            return Container(
+                              margin: const EdgeInsets.only(left: 15),
+                              child: const Text(
+                                'Oops! The server cannot currently process this request. Please try again after some time.',
+                                style: TextStyle(
+                                  fontFamily: 'SyneBold',
+                                  fontSize: 16,
+                                  color: Colors.redAccent,
+                                ),
+                              ),
+                            );
+                          } else {
+                            // Loading...
+                            print(snapshot.connectionState);
+                            return Container(
+                              color: const Color(0xFFE9EFFF),
+                              alignment: Alignment.center,
+                              child: const CircularProgressIndicator(),
+                            );
+                          }
+                        },
+                      )
+                    : Container(
                         color: const Color(0xFFE9EFFF),
                         alignment: Alignment.center,
                         child: const CircularProgressIndicator(),
                       );
-                    }
-                  },
-                );
               } else {
                 String genre = listOfRecommendations[index];
                 String capitalizedGenre =

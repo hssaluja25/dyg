@@ -1,9 +1,11 @@
 import 'package:dyg/pages/central/home/home.dart';
 import 'package:dyg/pages/central/recommendations/recommendations.dart';
 import 'package:dyg/pages/central/tasteCompate/taste_compare.dart';
+import 'package:dyg/providers/top_tracks_done.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:provider/provider.dart';
 
 class CentralPage extends StatefulWidget {
   const CentralPage(
@@ -34,26 +36,29 @@ class _CentralPageState extends State<CentralPage> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Scaffold(
-        // To prevent distortion of images when user taps on textfield.
-        resizeToAvoidBottomInset: false,
-        body: IndexedStack(
-          index: _currentIndex,
-          children: [
-            HomePage(
-              accessToken: accessToken,
-              refreshToken: refreshToken,
-              player: player,
-            ),
-            RecommendationsPage(
-              accessToken: accessToken,
-              refreshToken: refreshToken,
-              player: player,
-            ),
-            const TasteCompare(),
-          ],
+      child: ChangeNotifierProvider(
+        create: (context) => TopTracksDone(),
+        child: Scaffold(
+          // To prevent distortion of images when user taps on textfield.
+          resizeToAvoidBottomInset: false,
+          body: IndexedStack(
+            index: _currentIndex,
+            children: [
+              HomePage(
+                accessToken: accessToken,
+                refreshToken: refreshToken,
+                player: player,
+              ),
+              RecommendationsPage(
+                accessToken: accessToken,
+                refreshToken: refreshToken,
+                player: player,
+              ),
+              const TasteCompare(),
+            ],
+          ),
+          bottomNavigationBar: _buildBNB(),
         ),
-        bottomNavigationBar: _buildBNB(),
       ),
     );
   }

@@ -1,13 +1,19 @@
 import 'package:dio/dio.dart';
 import 'package:dio_http_cache/dio_http_cache.dart';
 import 'package:dyg/services/API/reqest_new_access_token.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:provider/provider.dart';
+
+import '../../providers/top_tracks_done.dart';
 
 /// Fetches short term top tracks
 /// Returns a list of maps with info about user's top tracks
 Future findTopTracks({
   required String accessToken,
   required String refreshToken,
+  required BuildContext context,
+  required bool mounted,
 }) async {
   print("Finding user's top tracks future of FutureBuilder is being executed");
   DioCacheManager dcm = DioCacheManager(CacheConfig());
@@ -71,6 +77,10 @@ Future findTopTracks({
     const storage = FlutterSecureStorage();
     await storage.write(key: 'ids', value: ids.join('%2C'));
 
+    if (!mounted) return;
+    Provider.of<TopTracksDone>(context, listen: false).topTracksDone = true;
+    print('Top tracks done now');
+
     bool odd = total % 2 == 0 ? false : true;
     // We don't want odd number of top tracks
     if (odd) {
@@ -88,6 +98,8 @@ Future findTopTracks({
     return await findTopTracks(
       accessToken: newAccessToken,
       refreshToken: refreshToken,
+      context: context,
+      mounted: mounted,
     );
   } else {
     print('Error fetching top tracks');

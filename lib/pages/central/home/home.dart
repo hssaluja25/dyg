@@ -35,8 +35,11 @@ class _HomePageState extends State<HomePage> {
   final String refreshToken;
   // Whether to show top tracks or top artists
   bool showTopTracks = true;
-  late final Future topTracksFuture =
-      findTopTracks(accessToken: accessToken, refreshToken: refreshToken);
+  late final Future topTracksFuture = findTopTracks(
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+      context: context,
+      mounted: mounted);
   late final Future topArtistsFuture =
       findTopArtists(accessToken: accessToken, refreshToken: refreshToken);
 
