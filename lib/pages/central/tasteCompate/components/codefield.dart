@@ -1,3 +1,4 @@
+import 'package:dyg/pages/central/tasteCompate/results/results.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -99,7 +100,8 @@ class CodeField extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (BuildContext context) => const Scaffold(
-                            body: Center(child: Text("Who's there?"))),
+                          body: Results(value: 0.6),
+                        ),
                       ),
                     );
                   }

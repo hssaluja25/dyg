@@ -169,8 +169,6 @@ class _HomePageState extends State<HomePage> {
           );
         } else {
           // Loading...
-          print('State is:');
-          print(snapshot.connectionState);
           return Container(
             color: const Color(0xFFF2C4C2),
             alignment: Alignment.center,

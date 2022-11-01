@@ -48,6 +48,9 @@ flutter:
 
     - assets/images/tasteCompare/bg-design.svg
 
+    - assets/images/results/avatar.jpg
+    - assets/images/results/diamond.png
+
     - assets/images/no_internet.jpg
   fonts:
     - family: Syne
@@ -56,3 +59,9 @@ flutter:
     - family: SyneBold
       fonts:
         - asset: assets/fonts/Syne-Bold.ttf
+    - family: District
+      fonts:
+        - asset: assets/fonts/District-Pro-W01-Book.ttf
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/Roboto-Light.ttf

@@ -149,7 +149,6 @@ class _RecommendationsPageState extends State<RecommendationsPage> {
                             );
                           } else {
                             // Loading...
-                            print(snapshot.connectionState);
                             return Container(
                               color: const Color(0xFFE9EFFF),
                               alignment: Alignment.center,
@@ -211,7 +210,6 @@ class _RecommendationsPageState extends State<RecommendationsPage> {
                         ),
                       );
                     } else {
-                      print(snapshot.connectionState);
                       // Loading...
                       return Container(
                         color: const Color(0xFFE9EFFF),
