@@ -1,14 +1,22 @@
 import 'package:dyg/pages/central/tasteCompate/results/results.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../../../services/API/check_valid_spotify_user.dart';
 
 /// Displays TextField and the TextButton in a Row.
 class CodeField extends StatelessWidget {
-  CodeField({required this.btnText, required this.userId, super.key}) {
+  CodeField(
+      {required this.btnText,
+      required this.userId,
+      required this.accessToken,
+      required this.refreshToken,
+      super.key}) {
     _controller = TextEditingController(
       text: btnText == 'Copy' ? userId : '',
     );
   }
+  final String accessToken;
+  final String refreshToken;
   final String btnText;
   final String userId;
   TextEditingController _controller = TextEditingController();
@@ -95,7 +103,20 @@ class CodeField extends StatelessWidget {
                               'You cannot compare music taste with yourself'),
                         ),
                       );
+                  } else if (!(await checkValidUser(
+                    userId: _controller.text,
+                    accessToken: accessToken,
+                    refreshToken: refreshToken,
+                  ))) {
+                    ScaffoldMessenger.of(context)
+                      ..removeCurrentSnackBar()
+                      ..showSnackBar(
+                        const SnackBar(
+                          content: Text('Friend id is not valid'),
+                        ),
+                      );
                   } else {
+                    print('Friend id is valid');
                     Navigator.push(
                       context,
                       MaterialPageRoute(

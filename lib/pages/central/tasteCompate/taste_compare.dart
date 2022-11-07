@@ -6,7 +6,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import '../components/log_out_button.dart';
 
 class TasteCompare extends StatefulWidget {
-  const TasteCompare({super.key});
+  const TasteCompare(
+      {required this.accessToken, required this.refreshToken, super.key});
+  final String accessToken;
+  final String refreshToken;
 
   @override
   State<TasteCompare> createState() => _TasteCompareState();
@@ -41,6 +44,8 @@ class _TasteCompareState extends State<TasteCompare> {
                   child: CodeField(
                     btnText: 'Copy',
                     userId: snapshot.data,
+                    accessToken: widget.accessToken,
+                    refreshToken: widget.refreshToken,
                   ),
                 ),
                 // Code field under Paste Code
@@ -49,6 +54,8 @@ class _TasteCompareState extends State<TasteCompare> {
                   child: CodeField(
                     btnText: 'Go!',
                     userId: snapshot.data,
+                    accessToken: widget.accessToken,
+                    refreshToken: widget.refreshToken,
                   ),
                 ),
               ],

@@ -54,7 +54,10 @@ class _CentralPageState extends State<CentralPage> {
                 refreshToken: refreshToken,
                 player: player,
               ),
-              const TasteCompare(),
+              TasteCompare(
+                accessToken: accessToken,
+                refreshToken: refreshToken,
+              ),
             ],
           ),
           bottomNavigationBar: _buildBNB(),

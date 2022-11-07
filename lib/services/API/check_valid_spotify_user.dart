@@ -1,15 +1,14 @@
 import 'package:dio/dio.dart';
-import 'package:dyg/services/API/reqest_new_access_token.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'reqest_new_access_token.dart';
 
-/// Finds id of current user
-Future fetchUserId({
+Future checkValidUser({
+  required String userId,
   required String accessToken,
   required String refreshToken,
 }) async {
-  print("Finding current user's id");
+  print("Checking if friend's user id is valid");
   final response = await Dio().get(
-    'https://api.spotify.com/v1/me',
+    'https://api.spotify.com/v1/users/$userId',
     options: Options(
       validateStatus: (_) => true,
       headers: {
@@ -18,25 +17,26 @@ Future fetchUserId({
     ),
   );
   if (response.statusCode != 200) {
-    print(response.data);
     print(response.statusCode);
+    print(response.data);
   }
   if (response.statusCode == 200) {
-    final map = Map<String, dynamic>.from(response.data);
-    const storage = FlutterSecureStorage();
-    await storage.write(key: 'userId', value: map['id']);
+    return true;
+  } else if (response.statusCode == 404) {
+    return false;
   } else if (response.statusCode == 401) {
     print('Access token expired');
     String newAccessToken =
         await requestRefreshedAccessToken(refreshToken: refreshToken);
 
     // Recursively call this function again
-    await fetchUserId(
+    return await checkValidUser(
+      userId: userId,
       accessToken: newAccessToken,
       refreshToken: refreshToken,
     );
   } else {
-    print("Error finding user's id");
-    throw Exception("Error finding user's id");
+    print('Error verifying if user is valid');
+    throw Exception('Error verifying if user is valid');
   }
 }
