@@ -2,6 +2,7 @@ import 'package:dyg/pages/central/tasteCompate/results/results.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../services/API/check_valid_spotify_user.dart';
+import '../../../../services/firestore/user_exists_on_firestore.dart';
 
 /// Displays TextField and the TextButton in a Row.
 class CodeField extends StatelessWidget {
@@ -115,8 +116,18 @@ class CodeField extends StatelessWidget {
                           content: Text('Friend id is not valid'),
                         ),
                       );
+                  } else if (!(await checkUserExists(userId: userId))) {
+                    print('User does not exist on firestore');
+                    ScaffoldMessenger.of(context)
+                      ..removeCurrentSnackBar()
+                      ..showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                              'The associated account does not have dyg installed.'),
+                        ),
+                      );
                   } else {
-                    print('Friend id is valid');
+                    print('Friend id is valid and user exists on firestore');
                     Navigator.push(
                       context,
                       MaterialPageRoute(

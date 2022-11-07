@@ -21,6 +21,7 @@ Future checkValidUser({
     print(response.data);
   }
   if (response.statusCode == 200) {
+    print('Valid user id');
     return true;
   } else if (response.statusCode == 404) {
     return false;
