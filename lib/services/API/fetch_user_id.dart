@@ -2,12 +2,12 @@ import 'package:dio/dio.dart';
 import 'package:dyg/services/API/reqest_new_access_token.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-/// Finds id of current user
+/// Finds id of user
 Future fetchUserId({
   required String accessToken,
   required String refreshToken,
 }) async {
-  print("Finding current user's id");
+  print("Finding user's id");
   final response = await Dio().get(
     'https://api.spotify.com/v1/me',
     options: Options(

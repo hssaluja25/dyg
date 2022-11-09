@@ -1,16 +1,41 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:dyg/services/find_common_artists.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class Results extends StatefulWidget {
-  const Results({super.key, required this.value});
-  final double value;
+  Results({
+    required this.friendName,
+    required this.img,
+    required this.following,
+    required this.friendFollowing,
+    super.key,
+  });
+  final List following;
+  final List friendFollowing;
+  final String friendName;
+  final String img;
 
   @override
   State<Results> createState() => _ResultsState();
 }
 
 class _ResultsState extends State<Results> {
+  // Empty if there is no match
+  late List commonArtists;
+  double match = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    List comparisonResult = compare(
+      following: widget.following,
+      friendFollowing: widget.friendFollowing,
+    );
+    commonArtists = comparisonResult.sublist(0, comparisonResult.length - 1);
+    match = comparisonResult[comparisonResult.length - 1];
+  }
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -36,17 +61,25 @@ class _ResultsState extends State<Results> {
                   },
                 ),
               ),
-              // Diamond
-              Positioned(
-                top: 0.11976 * height,
-                left: (width / 2) - 50,
-                child: Image.asset(
-                  'assets/images/results/diamond.png',
-                  color: Colors.white,
-                  height: 100,
-                  width: 100,
-                ),
-              ),
+              // User Image
+              widget.img != 'Unavailable'
+                  ? Positioned(
+                      top: 0.11976 * height,
+                      left: (width / 2) - 100,
+                      child: CircleAvatar(
+                        foregroundImage: NetworkImage(widget.img),
+                        radius: 100,
+                      ),
+                    )
+                  : Positioned(
+                      top: 0.11976 * height,
+                      left: (width / 2) - 100,
+                      child: const CircleAvatar(
+                        foregroundImage:
+                            AssetImage('assets/images/results/placeholder.png'),
+                        radius: 100,
+                      ),
+                    ),
               // The top dash line
               Positioned(
                 top: 0.0479 * height,
@@ -79,26 +112,28 @@ class _ResultsState extends State<Results> {
               ),
               // Main Content
               Positioned(
-                top: height / 3,
+                top: height / 3 + 50,
                 child: SizedBox(
-                  height: 2 * height / 3,
+                  height: 2 * height / 3 - 80,
                   width: width,
                   child: ListView.builder(
                     physics: const BouncingScrollPhysics(),
                     addAutomaticKeepAlives: true,
                     cacheExtent: 100,
-                    itemCount: 33,
+                    itemCount:
+                        // commonArtists would be empty if there was no match between user and friend
+                        commonArtists.isEmpty ? 3 : commonArtists.length + 4,
                     itemBuilder: (BuildContext context, int index) {
                       if (index == 0) {
-                        // Comparing with <Name> heading
+                        // Comparing with <friend name> heading
                         return Container(
                           margin:
                               EdgeInsets.symmetric(horizontal: 0.05089 * width),
-                          child: const AutoSizeText(
-                            'Comparing with Edward',
-                            style: TextStyle(
+                          child: AutoSizeText(
+                            'Comparing with ${widget.friendName}',
+                            style: const TextStyle(
                               color: Colors.white,
-                              fontFamily: 'District',
+                              fontFamily: 'Draft',
                               fontSize: 30,
                             ),
                             maxLines: 1,
@@ -120,11 +155,9 @@ class _ResultsState extends State<Results> {
                                     height: 0.263473 * height,
                                     width: 0.559796 * width,
                                     child: CircularProgressIndicator(
-                                      value: widget.value,
-                                      color: const Color.fromARGB(
-                                          255, 15, 232, 211),
-                                      backgroundColor:
-                                          Colors.white.withOpacity(0.80),
+                                      value: match / 100,
+                                      color: const Color(0xFF28c45c),
+                                      backgroundColor: const Color(0xFF181c24),
                                       strokeWidth: 10,
                                     ),
                                   ),
@@ -132,7 +165,7 @@ class _ResultsState extends State<Results> {
                               ),
                               // Value% in the center of the graph
                               Text(
-                                '${(widget.value * 100).toInt()}%',
+                                '${match.toInt()}%',
                                 style: const TextStyle(
                                   fontSize: 60,
                                   fontFamily: 'Syne',
@@ -143,61 +176,50 @@ class _ResultsState extends State<Results> {
                           ),
                         );
                       } else if (index == 2) {
-                        // Music Taste Match: value%
+                        // Match: value%
                         return Container(
-                          margin: EdgeInsets.only(
-                            left: 0.07633 * width,
-                            right: 0.07633 * width,
-                            top: 0.021557 * height,
-                          ),
-                          child: AutoSizeText(
-                            'Artists Match: ${(widget.value * 100).toInt()}%',
-                            style: const TextStyle(
-                              fontSize: 30,
-                              fontFamily: 'District',
-                              color: Colors.white,
-                            ),
-                            maxLines: 1,
-                          ),
-                        );
-                      } else if (index == 3) {
-                        // Common Artists
-                        return Container(
-                          margin: EdgeInsets.only(
-                              top: 0.02874 * height, left: 0.05089 * width),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          margin:
+                              EdgeInsets.symmetric(horizontal: 0.05089 * width),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              // Common part of Common Artists heading
                               const Text(
-                                'Common',
+                                'Match',
                                 style: TextStyle(
                                   fontSize: 30,
-                                  fontFamily: 'District',
+                                  fontFamily: 'AppliedSans',
                                   color: Colors.white,
                                 ),
                               ),
-                              Row(
-                                children: [
-                                  Container(
-                                    color: Colors.white,
-                                    height: 0.002395 * height,
-                                    width: 0.254453 * width,
-                                  ),
-                                  const Text(
-                                    'Artists',
-                                    style: TextStyle(
-                                      fontSize: 30,
-                                      fontFamily: 'District',
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ],
-                              )
+                              Text(
+                                '${match.toInt()}%',
+                                style: const TextStyle(
+                                  fontSize: 30,
+                                  fontFamily: 'Draft',
+                                  color: Colors.white,
+                                ),
+                              ),
                             ],
                           ),
                         );
+                      } else if (index == 3) {
+                        // Common Artists heading
+                        return Container(
+                          margin: EdgeInsets.only(
+                              top: 0.02874 * height, left: 0.05089 * width),
+                          child: const Text(
+                            'Common Artists',
+                            style: TextStyle(
+                              fontSize: 30,
+                              fontFamily: 'Draft',
+                              color: Colors.white,
+                            ),
+                          ),
+                        );
                       } else {
+                        Map artistInfo = commonArtists[index - 4];
+                        String artistName = artistInfo['name'];
+                        String img = artistInfo['img'];
                         // The Artists List
                         return Material(
                           color: Colors.black,
@@ -206,15 +228,14 @@ class _ResultsState extends State<Results> {
                               minLeadingWidth: 0.127226 * width,
                               minVerticalPadding: 0.02395 * height,
                               onTap: () {},
-                              leading: const CircleAvatar(
-                                foregroundImage: AssetImage(
-                                    'assets/images/results/avatar.jpg'),
+                              leading: CircleAvatar(
+                                foregroundImage: NetworkImage(img),
                               ),
                               title: AutoSizeText(
-                                'Artist Name ${index - 3}',
+                                artistName,
                                 style: const TextStyle(
                                   fontSize: 20,
-                                  fontFamily: 'Roboto',
+                                  fontFamily: 'AppliedSans',
                                   color: Colors.white,
                                 ),
                                 maxLines: 1,

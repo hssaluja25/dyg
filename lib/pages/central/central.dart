@@ -1,7 +1,7 @@
-import 'package:dyg/pages/central/home/home.dart';
-import 'package:dyg/pages/central/recommendations/recommendations.dart';
-import 'package:dyg/pages/central/tasteCompate/taste_compare.dart';
-import 'package:dyg/providers/top_tracks_done.dart';
+import 'home/home.dart';
+import 'recommendations/recommendations.dart';
+import 'tasteCompate/taste_compare.dart';
+import '../../providers/top_tracks_done.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:just_audio/just_audio.dart';
@@ -37,7 +37,7 @@ class _CentralPageState extends State<CentralPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: ChangeNotifierProvider(
-        create: (context) => TopTracksDone(),
+        create: (_) => TopTracksDone(),
         child: Scaffold(
           // To prevent distortion of images when user taps on textfield.
           resizeToAvoidBottomInset: false,

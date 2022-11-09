@@ -5,7 +5,6 @@ import 'package:dyg/services/API/fetch_top_tracks.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:just_audio/just_audio.dart';
-
 import '../components/log_out_button.dart';
 import 'widgets/scrolling_area.dart';
 
@@ -54,12 +53,14 @@ class _HomePageState extends State<HomePage> {
           await storage.read(key: 'uploadTime') ?? DateTime.now().toString();
       DateTime uploadTime = DateTime.parse(time);
       DateTime crtTime = DateTime.now();
-
-      // If 4 days have passed, upload user's followed artists
+      // Upload user's followed artists every day, 3 seconds after the app is launched
       if (crtTime.isAfter(uploadTime)) {
         Future.delayed(
           const Duration(seconds: 3),
-          () => upload(accessToken: accessToken, refreshToken: refreshToken),
+          () => upload(
+            accessToken: widget.accessToken,
+            refreshToken: widget.refreshToken,
+          ),
         );
       }
     }();

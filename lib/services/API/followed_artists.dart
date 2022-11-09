@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:dyg/services/API/reqest_new_access_token.dart';
 
+// Helper function that is called by getFollowing
+/// Finds artists user follows
 // If the number of followed artists is greater than the limit (50), then `after` query
 // is required to find the remaining artists.
 Future<List> findFollowingArtists({

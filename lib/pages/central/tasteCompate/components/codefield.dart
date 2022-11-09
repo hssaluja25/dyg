@@ -1,11 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dyg/pages/central/tasteCompate/results/results.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../services/API/check_valid_spotify_user.dart';
-import '../../../../services/firestore/user_exists_on_firestore.dart';
+import '../../../../services/API/get_following.dart';
 
 /// Displays TextField and the TextButton in a Row.
-class CodeField extends StatelessWidget {
+class CodeField extends StatefulWidget {
   CodeField(
       {required this.btnText,
       required this.userId,
@@ -22,6 +23,11 @@ class CodeField extends StatelessWidget {
   final String userId;
   TextEditingController _controller = TextEditingController();
 
+  @override
+  State<CodeField> createState() => _CodeFieldState();
+}
+
+class _CodeFieldState extends State<CodeField> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -53,10 +59,10 @@ class CodeField extends StatelessWidget {
                 ),
               ),
               child: TextField(
-                controller: _controller,
-                readOnly: btnText == 'Copy' ? true : false,
+                controller: widget._controller,
+                readOnly: widget.btnText == 'Copy' ? true : false,
                 decoration: InputDecoration(
-                  hintText: btnText == 'Copy' ? '' : 'Code',
+                  hintText: widget.btnText == 'Copy' ? '' : 'Code',
                   hintStyle: TextStyle(
                     color: Colors.black.withOpacity(0.5),
                   ),
@@ -74,10 +80,10 @@ class CodeField extends StatelessWidget {
             child: TextButton(
               onPressed: () async {
                 // The upper code field
-                if (btnText == 'Copy') {
+                if (widget.btnText == 'Copy') {
                   final sm = ScaffoldMessenger.of(context);
                   await Clipboard.setData(
-                      ClipboardData(text: _controller.text));
+                      ClipboardData(text: widget._controller.text));
                   sm
                     ..removeCurrentSnackBar()
                     ..showSnackBar(const SnackBar(
@@ -86,7 +92,7 @@ class CodeField extends StatelessWidget {
                 }
                 // The lower code field
                 else {
-                  final String friendCode = _controller.text;
+                  final String friendCode = widget._controller.text;
                   if (friendCode == '') {
                     ScaffoldMessenger.of(context)
                       ..removeCurrentSnackBar()
@@ -95,7 +101,7 @@ class CodeField extends StatelessWidget {
                           content: Text('Cannot be empty'),
                         ),
                       );
-                  } else if (friendCode == userId) {
+                  } else if (friendCode == widget.userId) {
                     ScaffoldMessenger.of(context)
                       ..removeCurrentSnackBar()
                       ..showSnackBar(
@@ -104,38 +110,81 @@ class CodeField extends StatelessWidget {
                               'You cannot compare music taste with yourself'),
                         ),
                       );
-                  } else if (!(await checkValidUser(
-                    userId: _controller.text,
-                    accessToken: accessToken,
-                    refreshToken: refreshToken,
-                  ))) {
-                    ScaffoldMessenger.of(context)
-                      ..removeCurrentSnackBar()
-                      ..showSnackBar(
-                        const SnackBar(
-                          content: Text('Friend id is not valid'),
-                        ),
-                      );
-                  } else if (!(await checkUserExists(userId: userId))) {
-                    print('User does not exist on firestore');
-                    ScaffoldMessenger.of(context)
-                      ..removeCurrentSnackBar()
-                      ..showSnackBar(
-                        const SnackBar(
-                          content: Text(
-                              'The associated account does not have dyg installed.'),
-                        ),
-                      );
                   } else {
-                    print('Friend id is valid and user exists on firestore');
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (BuildContext context) => const Scaffold(
-                          body: Results(value: 0.6),
-                        ),
-                      ),
+                    /// result = [false] if userId is invalid
+                    /// result = [true, friendName, img] is userId is valid
+                    final List<dynamic> result = await checkValidUser(
+                      userId: widget._controller.text,
+                      accessToken: widget.accessToken,
+                      refreshToken: widget.refreshToken,
                     );
+                    // Not a valid Spotify id
+                    if (!result[0]) {
+                      if (!mounted) return;
+                      ScaffoldMessenger.of(context)
+                        ..removeCurrentSnackBar()
+                        ..showSnackBar(
+                          const SnackBar(
+                            content: Text('Friend id is not valid'),
+                          ),
+                        );
+                    }
+                    // A valid spotify id was entered.
+                    else {
+                      if (!mounted) return;
+                      ScaffoldMessenger.of(context)
+                        ..removeCurrentSnackBar()
+                        ..showSnackBar(
+                          const SnackBar(
+                            content: Text('Loading'),
+                          ),
+                        );
+                      // Checks if friend exists on firestore (i.e., has Dyg installed)
+                      print('Checking if user exists on firestore.');
+                      final userRef = FirebaseFirestore.instance
+                          .collection('top tracks & artists')
+                          .doc(widget._controller.text);
+                      final snapshot = await userRef.get();
+                      if (!mounted) return;
+                      if (snapshot.exists) {
+                        print('User exists on firestore');
+                        print(
+                            'Friend id is valid and user exists on firestore');
+                        // Stores the artists followed by the friend
+                        List friendFollowing = snapshot.data()!['following'];
+                        String friendName = result[1];
+                        String img = result[2];
+
+                        List following = await getFollowing(
+                            accessToken: widget.accessToken,
+                            refreshToken: widget.refreshToken);
+                        if (!mounted) return;
+                        ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (BuildContext context) => Scaffold(
+                              body: Results(
+                                following: following,
+                                friendFollowing: friendFollowing,
+                                friendName: friendName,
+                                img: img,
+                              ),
+                            ),
+                          ),
+                        );
+                      } else {
+                        print('User does not exist on firestore');
+                        ScaffoldMessenger.of(context)
+                          ..removeCurrentSnackBar()
+                          ..showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                  'The associated account does not have dyg installed.'),
+                            ),
+                          );
+                      }
+                    }
                   }
                 }
               },
@@ -150,7 +199,7 @@ class CodeField extends StatelessWidget {
                 ),
               ),
               child: Text(
-                btnText,
+                widget.btnText,
                 style: const TextStyle(
                   fontFamily: 'SyneBold',
                 ),

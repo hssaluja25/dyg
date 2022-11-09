@@ -1,6 +1,9 @@
 import 'package:dio/dio.dart';
 import 'reqest_new_access_token.dart';
 
+/// Returns
+/// * [false] if userId is invalid
+/// * [true, friendName, img] is userId is valid
 Future checkValidUser({
   required String userId,
   required String accessToken,
@@ -22,9 +25,14 @@ Future checkValidUser({
   }
   if (response.statusCode == 200) {
     print('Valid user id');
-    return true;
-  } else if (response.statusCode == 404) {
-    return false;
+    Map map = Map.from(response.data);
+    String friendName = map['display_name'];
+    String img =
+        map['images'].isEmpty ? 'Unavailable' : map['images'][0]['url'];
+    return [true, friendName, img];
+  } else if (response.statusCode == 404 || response.statusCode == 400) {
+    // User id is not valid.
+    return [false];
   } else if (response.statusCode == 401) {
     print('Access token expired');
     String newAccessToken =
